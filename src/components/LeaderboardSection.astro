@@ -2,35 +2,35 @@
 import SectionLabel from './ui/SectionLabel.astro';
 ---
 
-<section class="flex flex-col items-center gap-12 bg-dark-950 px-[120px] py-20">
+<section class="flex flex-col items-center gap-8 bg-dark-950 px-5 py-14 md:gap-12 md:px-[120px] md:py-20">
   <!-- Header -->
   <div class="flex w-full flex-col items-center gap-4">
     <SectionLabel text="RANKING" />
-    <h2 class="text-center font-heading text-5xl font-extrabold italic leading-none tracking-[-1.5px] text-white">
+    <h2 class="text-center font-heading text-3xl font-extrabold italic leading-none tracking-[-1px] text-white md:text-5xl md:tracking-[-1.5px]">
       LOS MEJORES<br />DEL CLUB.
     </h2>
-    <p class="max-w-[600px] text-center font-body text-base leading-relaxed text-gray-400">
+    <p class="max-w-[600px] text-center font-body text-sm leading-relaxed text-gray-400 md:text-base">
       Conoce a los corredores con los mejores tiempos y puntajes del club.
       Compite, mejora y sube en el ranking.
     </p>
   </div>
 
   <!-- Tabs -->
-  <div id="lb-tabs" class="flex gap-2">
-    <button data-tab="5" class="lb-tab lb-tab-active rounded-full px-6 py-2.5 font-body text-[13px] font-semibold transition-colors">5K</button>
-    <button data-tab="10" class="lb-tab rounded-full px-6 py-2.5 font-body text-[13px] font-semibold transition-colors border border-dark-700 bg-dark-800 text-gray-400 hover:border-gray-600">10K</button>
-    <button data-tab="21" class="lb-tab rounded-full px-6 py-2.5 font-body text-[13px] font-semibold transition-colors border border-dark-700 bg-dark-800 text-gray-400 hover:border-gray-600">21K</button>
-    <button data-tab="points" class="lb-tab rounded-full px-6 py-2.5 font-body text-[13px] font-semibold transition-colors border border-dark-700 bg-dark-800 text-gray-400 hover:border-gray-600">Puntos Totales</button>
+  <div id="lb-tabs" class="flex flex-wrap justify-center gap-2">
+    <button data-tab="5" class="lb-tab lb-tab-active rounded-full px-5 py-2 font-body text-[12px] font-semibold transition-colors md:px-6 md:py-2.5 md:text-[13px]">5K</button>
+    <button data-tab="10" class="lb-tab rounded-full px-5 py-2 font-body text-[12px] font-semibold transition-colors border border-dark-700 bg-dark-800 text-gray-400 hover:border-gray-600 md:px-6 md:py-2.5 md:text-[13px]">10K</button>
+    <button data-tab="21" class="lb-tab rounded-full px-5 py-2 font-body text-[12px] font-semibold transition-colors border border-dark-700 bg-dark-800 text-gray-400 hover:border-gray-600 md:px-6 md:py-2.5 md:text-[13px]">21K</button>
+    <button data-tab="points" class="lb-tab rounded-full px-5 py-2 font-body text-[12px] font-semibold transition-colors border border-dark-700 bg-dark-800 text-gray-400 hover:border-gray-600 md:px-6 md:py-2.5 md:text-[13px]">Puntos</button>
   </div>
 
   <!-- Table -->
   <div id="lb-table" class="w-full overflow-hidden rounded-xl border border-dark-700 bg-dark-800">
     <!-- Header Row -->
-    <div class="flex h-14 items-center bg-[#141414] px-6">
-      <span class="w-20 font-body text-xs font-bold tracking-[1px] text-gray-500">#</span>
-      <span class="flex-1 font-body text-xs font-bold tracking-[1px] text-gray-500">CORREDOR</span>
-      <span id="lb-time-header" class="w-40 text-right font-body text-xs font-bold tracking-[1px] text-gray-500">MEJOR TIEMPO</span>
-      <span class="w-[120px] text-right font-body text-xs font-bold tracking-[1px] text-gray-500">PUNTOS</span>
+    <div class="flex h-12 items-center bg-[#141414] px-4 md:h-14 md:px-6">
+      <span class="w-12 font-body text-[10px] font-bold tracking-[1px] text-gray-500 md:w-20 md:text-xs">#</span>
+      <span class="flex-1 font-body text-[10px] font-bold tracking-[1px] text-gray-500 md:text-xs">CORREDOR</span>
+      <span id="lb-time-header" class="w-20 text-right font-body text-[10px] font-bold tracking-[1px] text-gray-500 md:w-40 md:text-xs">TIEMPO</span>
+      <span class="hidden w-[120px] text-right font-body text-xs font-bold tracking-[1px] text-gray-500 sm:block">PUNTOS</span>
     </div>
 
     <!-- Skeleton -->
@@ -136,46 +136,46 @@ import SectionLabel from './ui/SectionLabel.astro';
       if (isTop3) {
         const icon = runner.rank === 1 ? trophySvg(color) : medalSvg(color);
         const avatar = runner.avatar_url
-          ? `<img src="${runner.avatar_url}" alt="${fullName}" class="h-10 w-10 rounded-full object-cover border-2" style="border-color: ${color}" />`
-          : `<div class="flex h-10 w-10 items-center justify-center rounded-full border-2" style="border-color: ${color}; background-color: ${color}22"><span class="font-body text-[13px] font-extrabold" style="color: ${color}">${initials}</span></div>`;
+          ? `<img src="${runner.avatar_url}" alt="${fullName}" class="h-8 w-8 rounded-full object-cover border-2 md:h-10 md:w-10" style="border-color: ${color}" />`
+          : `<div class="flex h-8 w-8 items-center justify-center rounded-full border-2 md:h-10 md:w-10" style="border-color: ${color}; background-color: ${color}22"><span class="font-body text-[11px] font-extrabold md:text-[13px]" style="color: ${color}">${initials}</span></div>`;
 
         return `
-          <div class="flex h-[72px] items-center px-6 ${runner.rank === 1 ? 'lb-row-gold' : ''}">
-            <div class="flex w-20 items-center gap-2">
+          <div class="flex h-16 items-center px-4 md:h-[72px] md:px-6 ${runner.rank === 1 ? 'lb-row-gold' : ''}">
+            <div class="flex w-12 items-center gap-1.5 md:w-20 md:gap-2">
               ${icon}
-              <span class="font-heading text-lg font-extrabold" style="color: ${color}">${runner.rank}</span>
+              <span class="font-heading text-base font-extrabold md:text-lg" style="color: ${color}">${runner.rank}</span>
             </div>
-            <div class="flex flex-1 items-center gap-3">
+            <div class="flex flex-1 items-center gap-2 md:gap-3">
               ${avatar}
               <div class="flex flex-col gap-0.5">
-                <span class="font-body text-[15px] font-bold text-white">${fullName}</span>
-                <span class="font-body text-xs text-gray-500">${runner.races_completed} carreras</span>
+                <span class="font-body text-[13px] font-bold text-white md:text-[15px]">${fullName}</span>
+                <span class="hidden font-body text-xs text-gray-500 sm:block">${runner.races_completed} carreras</span>
               </div>
             </div>
-            <span class="w-40 text-right font-heading text-lg font-bold ${runner.rank === 1 ? 'text-accent' : 'text-white'}">${runner.time_display}</span>
-            <span class="w-[120px] text-right font-heading text-base font-bold text-white">${runner.points.toLocaleString()}</span>
+            <span class="w-20 text-right font-heading text-sm font-bold md:w-40 md:text-lg ${runner.rank === 1 ? 'text-accent' : 'text-white'}">${runner.time_display}</span>
+            <span class="hidden w-[120px] text-right font-heading text-base font-bold text-white sm:block">${runner.points.toLocaleString()}</span>
           </div>
           ${i < runners.length - 1 ? '<hr class="border-dark-700" />' : ''}
         `;
       } else {
         const avatar = runner.avatar_url
-          ? `<img src="${runner.avatar_url}" alt="${fullName}" class="h-9 w-9 rounded-full object-cover" />`
-          : `<div class="flex h-9 w-9 items-center justify-center rounded-full bg-dark-700"><span class="font-body text-xs font-bold text-gray-500">${initials}</span></div>`;
+          ? `<img src="${runner.avatar_url}" alt="${fullName}" class="h-8 w-8 rounded-full object-cover md:h-9 md:w-9" />`
+          : `<div class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-700 md:h-9 md:w-9"><span class="font-body text-[10px] font-bold text-gray-500 md:text-xs">${initials}</span></div>`;
 
         return `
-          <div class="flex h-16 items-center px-6">
-            <div class="flex w-20 items-center">
-              <span class="font-heading text-base font-bold text-[#555555]">${runner.rank}</span>
+          <div class="flex h-14 items-center px-4 md:h-16 md:px-6">
+            <div class="flex w-12 items-center md:w-20">
+              <span class="font-heading text-sm font-bold text-[#555555] md:text-base">${runner.rank}</span>
             </div>
-            <div class="flex flex-1 items-center gap-3">
+            <div class="flex flex-1 items-center gap-2 md:gap-3">
               ${avatar}
               <div class="flex flex-col gap-0.5">
-                <span class="font-body text-sm font-semibold text-gray-200">${fullName}</span>
-                <span class="font-body text-xs text-[#555555]">${runner.races_completed} carreras</span>
+                <span class="font-body text-[13px] font-semibold text-gray-200 md:text-sm">${fullName}</span>
+                <span class="hidden font-body text-xs text-[#555555] sm:block">${runner.races_completed} carreras</span>
               </div>
             </div>
-            <span class="w-40 text-right font-heading text-base font-semibold text-gray-300">${runner.time_display}</span>
-            <span class="w-[120px] text-right font-heading text-[15px] font-semibold text-gray-300">${runner.points.toLocaleString()}</span>
+            <span class="w-20 text-right font-heading text-sm font-semibold text-gray-300 md:w-40 md:text-base">${runner.time_display}</span>
+            <span class="hidden w-[120px] text-right font-heading text-[15px] font-semibold text-gray-300 sm:block">${runner.points.toLocaleString()}</span>
           </div>
           ${i < runners.length - 1 ? '<hr class="border-[#222222]" />' : ''}
         `;

@@ -33,14 +33,14 @@ const socialIcons = [
 ];
 ---
 
-<footer class="flex flex-col gap-10 bg-dark-950 px-[120px] pb-10 pt-[60px]">
+<footer class="flex flex-col gap-8 bg-dark-950 px-5 pb-8 pt-10 md:gap-10 md:px-[120px] md:pb-10 md:pt-[60px]">
   <!-- Top -->
-  <div class="flex justify-between">
+  <div class="flex flex-col gap-8 md:flex-row md:justify-between">
     <!-- Brand -->
-    <div class="flex w-[300px] flex-col gap-3">
+    <div class="flex flex-col gap-3 md:w-[300px]">
       <div class="flex items-center gap-2.5">
-        <img src="/images/logo.png" alt="HEROICOS" class="h-[42px] w-auto" />
-        <span class="font-heading text-lg font-extrabold tracking-[3px] text-white">
+        <img src="/images/logo.png" alt="HEROICOS" class="h-9 w-auto md:h-[42px]" />
+        <span class="font-heading text-base font-extrabold tracking-[3px] text-white md:text-lg">
           HEROICOS RUN CLUB
         </span>
       </div>
@@ -70,42 +70,44 @@ const socialIcons = [
     </div>
 
     <!-- Columns -->
-    <div class="flex flex-col gap-3">
-      <span class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">CLUB</span>
-      {clubLinks.map((link) => (
-        <a href={link.href} class="font-body text-sm text-gray-400 transition-colors hover:text-white">
-          {link.label}
-        </a>
-      ))}
-    </div>
+    <div class="grid grid-cols-2 gap-8 sm:grid-cols-3 md:flex md:gap-16">
+      <div class="flex flex-col gap-3">
+        <span class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">CLUB</span>
+        {clubLinks.map((link) => (
+          <a href={link.href} class="font-body text-sm text-gray-400 transition-colors hover:text-white">
+            {link.label}
+          </a>
+        ))}
+      </div>
 
-    <div class="flex flex-col gap-3">
-      <span class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">LEGAL</span>
-      {legalLinks.map((link) => (
-        <a href={link.href} class="font-body text-sm text-gray-400 transition-colors hover:text-white">
-          {link.label}
-        </a>
-      ))}
-    </div>
+      <div class="flex flex-col gap-3">
+        <span class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">LEGAL</span>
+        {legalLinks.map((link) => (
+          <a href={link.href} class="font-body text-sm text-gray-400 transition-colors hover:text-white">
+            {link.label}
+          </a>
+        ))}
+      </div>
 
-    <div class="flex flex-col gap-3">
-      <span class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">CONTACTO</span>
-      {contactLinks.map((link) => (
-        <a href={link.href} class="font-body text-sm text-gray-400 transition-colors hover:text-white">
-          {link.label}
-        </a>
-      ))}
+      <div class="flex flex-col gap-3">
+        <span class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">CONTACTO</span>
+        {contactLinks.map((link) => (
+          <a href={link.href} class="font-body text-[13px] text-gray-400 transition-colors hover:text-white md:text-sm">
+            {link.label}
+          </a>
+        ))}
+      </div>
     </div>
   </div>
 
   <hr class="border-dark-800" />
 
   <!-- Bottom -->
-  <div class="flex items-center justify-between">
+  <div class="flex flex-col items-center gap-2 md:flex-row md:justify-between">
     <span class="font-body text-xs text-gray-600">
       &copy; 2026 Desarrollado por JP Development
     </span>
-    <span class="font-heading text-[13px] italic font-semibold text-accent/25">
+    <span class="font-heading text-[12px] italic font-semibold text-accent/25 md:text-[13px]">
       "La línea de meta es solo el comienzo."
     </span>
   </div>

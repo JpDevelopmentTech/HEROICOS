@@ -2,31 +2,31 @@
 import SectionLabel from './ui/SectionLabel.astro';
 ---
 
-<section id="rutas" class="flex flex-col gap-[60px] bg-dark-900 px-[120px] py-[100px]">
+<section id="rutas" class="flex flex-col gap-8 bg-dark-900 px-5 py-14 md:gap-[60px] md:px-[120px] md:py-[100px]">
   <!-- Header -->
   <div class="flex flex-col gap-4">
     <SectionLabel text="CALENDARIO" centered={false} />
-    <h2 class="font-heading text-5xl font-extrabold italic leading-none tracking-[-1.5px] text-white">
+    <h2 class="font-heading text-3xl font-extrabold italic leading-none tracking-[-1px] text-white md:text-5xl md:tracking-[-1.5px]">
       PRÓXIMOS<br />KILÓMETROS.
     </h2>
   </div>
 
   <!-- Content: Events + Map -->
-  <div class="flex w-full gap-10">
+  <div class="flex w-full flex-col gap-6 md:flex-row md:gap-10">
     <!-- Event List -->
-    <div id="events-list" class="flex flex-1 flex-col">
+    <div id="events-list" class="flex w-full flex-col md:flex-1">
       <!-- Skeleton while loading -->
       <div class="events-skeleton flex flex-col">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div class:list={['flex items-center gap-4 bg-dark-800 px-5 py-6 animate-pulse', { 'border-b border-dark-700': i < 2 }]}>
-            <div class="flex w-14 flex-col items-center gap-2">
+          <div class:list={['flex items-center gap-4 bg-dark-800 px-4 py-5 animate-pulse md:px-5 md:py-6', { 'border-b border-dark-700': i < 2 }]}>
+            <div class="flex w-12 flex-col items-center gap-2 md:w-14">
               <div class="h-7 w-10 rounded bg-dark-700"></div>
               <div class="h-3 w-8 rounded bg-dark-700"></div>
             </div>
             <div class="h-12 w-px bg-dark-700"></div>
             <div class="flex flex-1 flex-col gap-2">
-              <div class="h-4 w-48 rounded bg-dark-700"></div>
-              <div class="h-3 w-64 rounded bg-dark-700"></div>
+              <div class="h-4 w-32 rounded bg-dark-700 md:w-48"></div>
+              <div class="h-3 w-48 rounded bg-dark-700 md:w-64"></div>
             </div>
           </div>
         ))}
@@ -34,7 +34,7 @@ import SectionLabel from './ui/SectionLabel.astro';
     </div>
 
     <!-- Map -->
-    <div id="events-map" class="flex-1 overflow-hidden rounded-xl border border-dark-700" style="min-height: 420px;"></div>
+    <div id="events-map" class="w-full overflow-hidden rounded-xl border border-dark-700 md:flex-1" style="min-height: 300px;"></div>
   </div>
 </section>
 

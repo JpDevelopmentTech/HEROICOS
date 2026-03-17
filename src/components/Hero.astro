@@ -6,7 +6,7 @@ const trustItems = [
 ];
 ---
 
-<section class="relative h-[800px] w-full overflow-hidden">
+<section class="relative h-[600px] w-full overflow-hidden md:h-[800px]">
   <!-- Background Image -->
   <img
     src="/images/hero-bg.jpg"
@@ -18,36 +18,36 @@ const trustItems = [
   <div class="hero-overlay absolute inset-0"></div>
 
   <!-- Content -->
-  <div class="relative z-10 flex h-full flex-col justify-center gap-6 px-[120px] pt-[120px]">
-    <span class="block h-1 w-20 rounded-sm bg-accent"></span>
+  <div class="relative z-10 flex h-full flex-col justify-center gap-5 px-5 pt-20 md:gap-6 md:px-[120px] md:pt-[120px]">
+    <span class="block h-1 w-14 rounded-sm bg-accent md:w-20"></span>
 
-    <h1 class="max-w-[900px] font-heading text-[72px] font-extrabold italic leading-[0.95] tracking-[-2px] text-white">
+    <h1 class="max-w-[900px] font-heading text-[36px] font-extrabold italic leading-[0.95] tracking-[-1px] text-white md:text-[72px] md:tracking-[-2px]">
       DONDE LA CIUDAD<br />SE CONVIERTE<br />EN PISTA.
     </h1>
 
-    <p class="max-w-[600px] font-body text-xl leading-relaxed text-gray-400">
-      Súmate a la comunidad de running más grande de la ciudad<br />
+    <p class="max-w-[600px] font-body text-base leading-relaxed text-gray-400 md:text-xl">
+      Súmate a la comunidad de running más grande de la ciudad
       y lleva tus tiempos al siguiente nivel.
     </p>
 
     <!-- CTA Row -->
-    <div class="flex gap-5">
+    <div class="flex flex-col gap-3 sm:flex-row sm:gap-5">
       <button
         type="button"
         data-open-modal="register-modal"
         data-auth-guest-only
-        class="flex items-center gap-3 rounded bg-accent px-12 py-[18px] transition-opacity hover:opacity-90"
+        class="flex items-center justify-center gap-3 rounded bg-accent px-8 py-4 transition-opacity hover:opacity-90 md:px-12 md:py-[18px]"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-dark-950">
           <path d="M5 12h14M12 5l7 7-7 7" />
         </svg>
-        <span class="font-heading text-base font-bold tracking-[2px] text-dark-950">
+        <span class="font-heading text-sm font-bold tracking-[2px] text-dark-950 md:text-base">
           ÚNETE AL CLUB — ES GRATIS
         </span>
       </button>
       <a
         href="#rutas"
-        class="flex items-center rounded border border-accent/25 px-12 py-[18px] transition-colors hover:border-accent/50"
+        class="flex items-center justify-center rounded border border-accent/25 px-8 py-4 transition-colors hover:border-accent/50 md:px-12 md:py-[18px]"
       >
         <span class="font-body text-sm font-semibold tracking-[2px] text-accent">
           VER RUTAS
@@ -56,7 +56,7 @@ const trustItems = [
     </div>
 
     <!-- Trust Line -->
-    <div class="flex items-center gap-6">
+    <div class="hidden items-center gap-6 sm:flex">
       {
         trustItems.map((item, i) => (
           <>

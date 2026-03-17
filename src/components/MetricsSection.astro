@@ -2,35 +2,35 @@
 import SectionLabel from './ui/SectionLabel.astro';
 ---
 
-<section id="comunidad" class="flex flex-col items-center gap-12 bg-dark-900 px-[120px] py-20">
+<section id="comunidad" class="flex flex-col items-center gap-8 bg-dark-900 px-5 py-14 md:gap-12 md:px-[120px] md:py-20">
   <SectionLabel text="LA COMUNIDAD EN NÚMEROS" />
 
-  <div class="flex w-full justify-center gap-8">
+  <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-8">
     <!-- Corredores Activos -->
-    <div class="flex w-[360px] flex-col items-center gap-3 rounded-lg border border-dark-700 bg-dark-800 px-8 py-10">
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent">
+    <div class="flex flex-col items-center gap-2 rounded-lg border border-dark-700 bg-dark-800 px-6 py-8 md:gap-3 md:px-8 md:py-10">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent md:h-8 md:w-8">
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
       </svg>
-      <span id="metric-runners" class="font-heading text-5xl font-extrabold tracking-[-2px] text-white">—</span>
-      <span class="font-body text-sm font-medium text-gray-400">Corredores Activos</span>
+      <span id="metric-runners" class="font-heading text-4xl font-extrabold tracking-[-2px] text-white md:text-5xl">—</span>
+      <span class="font-body text-xs font-medium text-gray-400 md:text-sm">Corredores Activos</span>
     </div>
 
     <!-- Eventos Realizados -->
-    <div class="flex w-[360px] flex-col items-center gap-3 rounded-lg border border-dark-700 bg-dark-800 px-8 py-10">
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent">
+    <div class="flex flex-col items-center gap-2 rounded-lg border border-dark-700 bg-dark-800 px-6 py-8 md:gap-3 md:px-8 md:py-10">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent md:h-8 md:w-8">
         <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
       </svg>
-      <span id="metric-events" class="font-heading text-5xl font-extrabold tracking-[-2px] text-white">—</span>
-      <span class="font-body text-sm font-medium text-gray-400">Eventos Realizados</span>
+      <span id="metric-events" class="font-heading text-4xl font-extrabold tracking-[-2px] text-white md:text-5xl">—</span>
+      <span class="font-body text-xs font-medium text-gray-400 md:text-sm">Eventos Realizados</span>
     </div>
 
     <!-- Km Recorridos -->
-    <div class="flex w-[360px] flex-col items-center gap-3 rounded-lg border border-dark-700 bg-dark-800 px-8 py-10">
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent">
+    <div class="flex flex-col items-center gap-2 rounded-lg border border-dark-700 bg-dark-800 px-6 py-8 md:gap-3 md:px-8 md:py-10">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent md:h-8 md:w-8">
         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
       </svg>
-      <span id="metric-km" class="font-heading text-5xl font-extrabold tracking-[-2px] text-white">—</span>
-      <span class="font-body text-sm font-medium text-gray-400">Km Recorridos Total</span>
+      <span id="metric-km" class="font-heading text-4xl font-extrabold tracking-[-2px] text-white md:text-5xl">—</span>
+      <span class="font-body text-xs font-medium text-gray-400 md:text-sm">Km Recorridos Total</span>
     </div>
   </div>
 </section>
@@ -44,19 +44,16 @@ import SectionLabel from './ui/SectionLabel.astro';
   }
 
   async function loadMetrics() {
-    // Total registered runners
     const { count: runners } = await supabase
       .from('profiles')
       .select('*', { count: 'exact', head: true });
 
-    // Total events (past)
     const today = new Date().toISOString().split('T')[0];
     const { count: events } = await supabase
       .from('events')
       .select('*', { count: 'exact', head: true })
       .lt('date', today);
 
-    // Total km from completed registrations
     const { data: kmData } = await supabase
       .from('event_registrations')
       .select('distance_completed_km')

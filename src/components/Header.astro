@@ -6,12 +6,19 @@ const navLinks = [
 ];
 ---
 
-<header class="sticky top-0 z-50 flex items-center justify-between bg-dark-950/90 px-20 py-5 backdrop-blur-md">
+<header class="sticky top-0 z-50 flex items-center justify-between bg-dark-950/90 px-5 py-4 backdrop-blur-md md:px-20 md:py-5">
   <a href="/">
-    <img src="/images/logo.png" alt="HEROICOS Run Club" class="h-8 w-auto" />
+    <img src="/images/logo.png" alt="HEROICOS Run Club" class="h-7 w-auto md:h-8" />
   </a>
 
-  <nav class="flex items-center gap-10">
+  <!-- Mobile menu button -->
+  <button id="mobile-menu-btn" type="button" class="flex items-center justify-center text-gray-400 md:hidden">
+    <svg id="menu-icon-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    <svg id="menu-icon-close" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+  </button>
+
+  <!-- Desktop nav -->
+  <nav class="hidden items-center gap-10 md:flex">
     {
       navLinks.map((link) => (
         <a
@@ -45,7 +52,6 @@ const navLinks = [
     <div id="auth-user" class="hidden items-center gap-4">
       <div class="flex items-center gap-3">
         <label for="header-avatar-input" class="group relative flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-accent/20 font-heading text-sm font-bold text-accent" id="user-avatar" title="Cambiar foto de perfil">
-          <!-- Initials or photo go here -->
           <div class="absolute inset-0 flex items-center justify-center bg-dark-950/60 opacity-0 transition-opacity group-hover:opacity-100">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
           </div>
@@ -63,18 +69,96 @@ const navLinks = [
       </button>
     </div>
   </nav>
+
+  <!-- Mobile nav -->
+  <div id="mobile-menu" class="fixed inset-x-0 top-[60px] z-50 hidden flex-col gap-6 border-t border-dark-700 bg-dark-950/95 px-5 py-6 backdrop-blur-md md:hidden">
+    {
+      navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="font-body text-sm font-semibold tracking-[2px] text-gray-400 transition-colors hover:text-white"
+        >
+          {link.label}
+        </a>
+      ))
+    }
+    <hr class="border-dark-700" />
+    <!-- Mobile guest buttons -->
+    <div id="auth-guest-mobile" class="flex flex-col gap-3">
+      <button
+        type="button"
+        data-open-modal="login-modal"
+        class="w-full rounded border border-dark-700 bg-dark-800 py-3 font-body text-[13px] font-semibold tracking-[2px] text-gray-400"
+      >
+        INICIAR SESIÓN
+      </button>
+      <button
+        type="button"
+        data-open-modal="register-modal"
+        class="w-full rounded bg-accent py-3 font-body text-[13px] font-bold tracking-[2px] text-dark-950"
+      >
+        ÚNETE
+      </button>
+    </div>
+    <!-- Mobile user menu -->
+    <div id="auth-user-mobile" class="hidden flex-col gap-3">
+      <div class="flex items-center gap-3">
+        <div id="user-avatar-mobile" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/20 font-heading text-sm font-bold text-accent"></div>
+        <span id="user-name-mobile" class="font-body text-sm font-medium text-white"></span>
+      </div>
+      <button
+        type="button"
+        id="logout-btn-mobile"
+        class="flex w-full items-center justify-center gap-2 rounded border border-dark-700 bg-dark-800 py-3 font-body text-[12px] font-semibold tracking-[1px] text-gray-400"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        SALIR
+      </button>
+    </div>
+  </div>
 </header>
 
 <script>
   import { signOut, getUser, onAuthStateChange, updateAvatar, uploadPendingAvatar } from '../lib/auth';
   import { supabase } from '../lib/supabase';
 
+  function setupMobileMenu() {
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const iconOpen = document.getElementById('menu-icon-open');
+    const iconClose = document.getElementById('menu-icon-close');
+    if (!btn || !menu) return;
+
+    btn.addEventListener('click', () => {
+      const isOpen = !menu.classList.contains('hidden');
+      menu.classList.toggle('hidden', isOpen);
+      menu.classList.toggle('flex', !isOpen);
+      iconOpen?.classList.toggle('hidden', !isOpen);
+      iconClose?.classList.toggle('hidden', isOpen);
+    });
+
+    // Close menu when clicking a link
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menu.classList.add('hidden');
+        menu.classList.remove('flex');
+        iconOpen?.classList.remove('hidden');
+        iconClose?.classList.add('hidden');
+      });
+    });
+  }
+
   function setupAuthUI() {
     const guestEl = document.getElementById('auth-guest');
     const userEl = document.getElementById('auth-user');
+    const guestMobile = document.getElementById('auth-guest-mobile');
+    const userMobile = document.getElementById('auth-user-mobile');
     const avatarEl = document.getElementById('user-avatar');
     const nameEl = document.getElementById('user-name');
+    const nameMobile = document.getElementById('user-name-mobile');
+    const avatarMobile = document.getElementById('user-avatar-mobile');
     const logoutBtn = document.getElementById('logout-btn');
+    const logoutBtnMobile = document.getElementById('logout-btn-mobile');
     const avatarInput = document.getElementById('header-avatar-input') as HTMLInputElement | null;
 
     function setAvatarImage(url: string, alt: string) {
@@ -111,6 +195,7 @@ const navLinks = [
         const displayName = firstName ? `${firstName} ${lastName}`.trim() : user.email?.split('@')[0] || '';
 
         if (nameEl) nameEl.textContent = displayName;
+        if (nameMobile) nameMobile.textContent = displayName;
 
         // Upload pending avatar from registration if any
         await uploadPendingAvatar();
@@ -132,11 +217,21 @@ const navLinks = [
         guestEl?.classList.remove('flex');
         userEl?.classList.remove('hidden');
         userEl?.classList.add('flex');
+        guestMobile?.classList.add('hidden');
+        guestMobile?.classList.remove('flex');
+        userMobile?.classList.remove('hidden');
+        userMobile?.classList.add('flex');
+        // Mobile avatar initials
+        if (avatarMobile) avatarMobile.textContent = initials;
       } else {
         guestEl?.classList.remove('hidden');
         guestEl?.classList.add('flex');
         userEl?.classList.add('hidden');
         userEl?.classList.remove('flex');
+        guestMobile?.classList.remove('hidden');
+        guestMobile?.classList.add('flex');
+        userMobile?.classList.add('hidden');
+        userMobile?.classList.remove('flex');
       }
     }
 
@@ -169,16 +264,19 @@ const navLinks = [
     onAuthStateChange(updateUI);
 
     // Logout handler
-    logoutBtn?.addEventListener('click', async () => {
+    const handleLogout = async () => {
       try {
         await signOut();
         updateUI(null);
       } catch (err) {
         console.error('Error signing out:', err);
       }
-    });
+    };
+    logoutBtn?.addEventListener('click', handleLogout);
+    logoutBtnMobile?.addEventListener('click', handleLogout);
   }
 
+  setupMobileMenu();
   setupAuthUI();
-  document.addEventListener('astro:after-swap', setupAuthUI);
+  document.addEventListener('astro:after-swap', () => { setupMobileMenu(); setupAuthUI(); });
 </script>

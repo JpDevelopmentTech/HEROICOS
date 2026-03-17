@@ -2,21 +2,21 @@
 import SectionLabel from './ui/SectionLabel.astro';
 ---
 
-<section data-auth-user-only class="hidden flex-col items-center gap-[60px] bg-dark-950 px-[120px] py-[100px]">
+<section data-auth-user-only class="hidden flex-col items-center gap-8 bg-dark-950 px-5 py-14 md:gap-[60px] md:px-[120px] md:py-[100px]">
   <!-- Header -->
   <div class="flex w-full flex-col items-center gap-4">
     <SectionLabel text="FEATURE" />
-    <h2 class="text-center font-heading text-5xl font-extrabold italic leading-none tracking-[-1.5px] text-white">
+    <h2 class="text-center font-heading text-3xl font-extrabold italic leading-none tracking-[-1px] text-white md:text-5xl md:tracking-[-1.5px]">
       TU PROGRESO,<br />DIGITALIZADO.
     </h2>
-    <p class="max-w-[600px] text-center font-body text-base leading-relaxed text-gray-400">
+    <p class="max-w-[600px] text-center font-body text-sm leading-relaxed text-gray-400 md:text-base">
       Cada kilómetro cuenta. Tu perfil de corredor registra tus Personal Bests,
       rutas favoritas y evolución en tiempo real.
     </p>
   </div>
 
   <!-- Runner Profile Card -->
-  <div id="profile-card" class="flex w-[900px] flex-col gap-8 rounded-xl border border-dark-700 bg-dark-800 p-10">
+  <div id="profile-card" class="flex w-full max-w-[900px] flex-col gap-6 rounded-xl border border-dark-700 bg-dark-800 p-5 md:gap-8 md:p-10">
     <!-- Skeleton -->
     <div id="profile-skeleton" class="flex flex-col gap-8 animate-pulse">
       <div class="flex w-full items-center gap-5">
@@ -131,15 +131,15 @@ import SectionLabel from './ui/SectionLabel.astro';
 
     // Avatar
     const avatarHtml = profile.avatar_url
-      ? `<img src="${profile.avatar_url}" alt="${fullName}" class="h-[72px] w-[72px] rounded-full object-cover" />`
-      : `<div class="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-accent/20 font-heading text-2xl font-bold text-accent">${((firstName[0] || '') + (lastName[0] || '')).toUpperCase()}</div>`;
+      ? `<img src="${profile.avatar_url}" alt="${fullName}" class="h-14 w-14 rounded-full object-cover md:h-[72px] md:w-[72px]" />`
+      : `<div class="flex h-14 w-14 items-center justify-center rounded-full bg-accent/20 font-heading text-xl font-bold text-accent md:h-[72px] md:w-[72px] md:text-2xl">${((firstName[0] || '') + (lastName[0] || '')).toUpperCase()}</div>`;
 
     // PBs HTML
     const pbsHtml = pbs.length > 0
       ? pbs.map(pb => `
-          <div class="flex flex-1 flex-col items-center gap-2 rounded-lg bg-dark-750 px-5 py-6">
-            <span class="font-heading text-sm font-bold tracking-[2px] text-accent">${pb.distance}</span>
-            <span class="font-heading text-4xl font-extrabold tracking-[-1.5px] text-white">${pb.time}</span>
+          <div class="flex flex-1 flex-col items-center gap-1.5 rounded-lg bg-dark-750 px-3 py-4 md:gap-2 md:px-5 md:py-6">
+            <span class="font-heading text-xs font-bold tracking-[2px] text-accent md:text-sm">${pb.distance}</span>
+            <span class="font-heading text-2xl font-extrabold tracking-[-1px] text-white md:text-4xl md:tracking-[-1.5px]">${pb.time}</span>
           </div>
         `).join('')
       : `<div class="flex flex-1 items-center justify-center rounded-lg bg-dark-750 px-5 py-6">
@@ -165,11 +165,11 @@ import SectionLabel from './ui/SectionLabel.astro';
 
     content.innerHTML = `
       <!-- Profile Top -->
-      <div class="flex w-full items-center gap-5">
+      <div class="flex w-full items-center gap-4 md:gap-5">
         ${avatarHtml}
         <div class="flex flex-col gap-1">
-          <span class="font-heading text-[22px] font-bold tracking-[-0.5px] text-white">${fullName}</span>
-          <span class="font-body text-[13px] font-medium text-gray-400">
+          <span class="font-heading text-lg font-bold tracking-[-0.5px] text-white md:text-[22px]">${fullName}</span>
+          <span class="font-body text-[11px] font-medium text-gray-400 md:text-[13px]">
             Miembro desde ${joinYear} · Nivel: ${level} · ${totalKm} km total
           </span>
         </div>
@@ -179,12 +179,12 @@ import SectionLabel from './ui/SectionLabel.astro';
 
       <!-- Personal Bests -->
       <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">PERSONAL BESTS</span>
-      <div class="flex w-full gap-5">${pbsHtml}</div>
+      <div class="flex w-full gap-3 md:gap-5">${pbsHtml}</div>
 
       <!-- Progress Chart -->
       <div class="flex w-full flex-col gap-3">
         <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">PROGRESIÓN MENSUAL (KM)</span>
-        <div class="flex h-[120px] items-end gap-2 px-5">${barsHtml}</div>
+        <div class="flex h-[100px] items-end gap-2 px-2 md:h-[120px] md:px-5">${barsHtml}</div>
       </div>
     `;
 

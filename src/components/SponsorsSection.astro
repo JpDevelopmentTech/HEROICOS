@@ -9,21 +9,21 @@ const sponsors = [
 ];
 ---
 
-<section id="beneficios" class="flex flex-col items-center gap-12 bg-dark-950 px-[120px] py-20">
+<section id="beneficios" class="flex flex-col items-center gap-8 bg-dark-950 px-5 py-14 md:gap-12 md:px-[120px] md:py-20">
   <SectionLabel text="PARTNERS" />
 
-  <h2 class="max-w-[700px] text-center font-heading text-4xl font-extrabold italic leading-[1.1] tracking-[-1px] text-white">
+  <h2 class="max-w-[700px] text-center font-heading text-3xl font-extrabold italic leading-[1.1] tracking-[-1px] text-white md:text-4xl">
     BENEFICIOS EXCLUSIVOS<br />CON NUESTROS ALIADOS.
   </h2>
 
-  <p class="text-center font-body text-base text-gray-400">
+  <p class="text-center font-body text-sm text-gray-400 md:text-base">
     Descuentos y acceso preferencial por ser parte del club.
   </p>
 
-  <div class="flex w-full justify-center gap-8">
+  <div class="grid w-full grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-8">
     {
       sponsors.map((sponsor) => (
-        <div class="flex h-[120px] w-[260px] items-center justify-center rounded-xl border border-dark-700 bg-dark-800">
+        <div class="flex h-[90px] items-center justify-center rounded-xl border border-dark-700 bg-dark-800 md:h-[120px]">
           <span
             class="font-heading font-extrabold text-white/25"
             style={`font-size: ${sponsor.fontSize}; letter-spacing: ${sponsor.letterSpacing}`}
