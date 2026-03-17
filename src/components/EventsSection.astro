@@ -1,0 +1,239 @@
+---
+import SectionLabel from './ui/SectionLabel.astro';
+---
+
+<section id="rutas" class="flex flex-col gap-[60px] bg-dark-900 px-[120px] py-[100px]">
+  <!-- Header -->
+  <div class="flex flex-col gap-4">
+    <SectionLabel text="CALENDARIO" centered={false} />
+    <h2 class="font-heading text-5xl font-extrabold italic leading-none tracking-[-1.5px] text-white">
+      PRÓXIMOS<br />KILÓMETROS.
+    </h2>
+  </div>
+
+  <!-- Content: Events + Map -->
+  <div class="flex w-full gap-10">
+    <!-- Event List -->
+    <div id="events-list" class="flex flex-1 flex-col">
+      <!-- Skeleton while loading -->
+      <div class="events-skeleton flex flex-col">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div class:list={['flex items-center gap-4 bg-dark-800 px-5 py-6 animate-pulse', { 'border-b border-dark-700': i < 2 }]}>
+            <div class="flex w-14 flex-col items-center gap-2">
+              <div class="h-7 w-10 rounded bg-dark-700"></div>
+              <div class="h-3 w-8 rounded bg-dark-700"></div>
+            </div>
+            <div class="h-12 w-px bg-dark-700"></div>
+            <div class="flex flex-1 flex-col gap-2">
+              <div class="h-4 w-48 rounded bg-dark-700"></div>
+              <div class="h-3 w-64 rounded bg-dark-700"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div id="events-map" class="flex-1 overflow-hidden rounded-xl border border-dark-700" style="min-height: 420px;"></div>
+  </div>
+</section>
+
+<script>
+  import { supabase } from '../lib/supabase';
+  import L from 'leaflet';
+  import 'leaflet/dist/leaflet.css';
+
+  const DAY_NAMES = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
+  const DAY_FULL = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const LEVEL_LABELS: Record<string, string> = {
+    beginner: 'Principiante',
+    intermediate: 'Intermedio',
+    advanced: 'Avanzado',
+    all: 'Todos los niveles',
+  };
+
+  const ROUTE_COLORS = ['#00F0FF', '#FF6B6B', '#FFD93D', '#6BCB77', '#9B59B6'];
+
+  let map: L.Map | null = null;
+
+  function initMap() {
+    const mapEl = document.getElementById('events-map');
+    if (!mapEl) return;
+
+    // Destroy previous instance if re-initializing
+    if (map) {
+      map.remove();
+      map = null;
+    }
+
+    map = L.map(mapEl, {
+      zoomControl: false,
+      attributionControl: false,
+    }).setView([20.975, -89.610], 13);
+
+    // Dark tiles from CartoDB
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Zoom control bottom-right
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+  }
+
+  function renderRoutes(events: any[]) {
+    if (!map) return;
+
+    const bounds = L.latLngBounds([]);
+
+    events.forEach((event, i) => {
+      const color = ROUTE_COLORS[i % ROUTE_COLORS.length];
+      const coords: [number, number][] = event.route_coordinates || [];
+
+      if (coords.length > 0) {
+        // Draw route polyline
+        const polyline = L.polyline(coords, {
+          color,
+          weight: 3,
+          opacity: 0.85,
+          lineJoin: 'round',
+          lineCap: 'round',
+        }).addTo(map!);
+
+        bounds.extend(polyline.getBounds());
+
+        // Start marker
+        const startIcon = L.divIcon({
+          className: '',
+          html: `<div style="
+            width: 28px; height: 28px;
+            background: ${color};
+            border: 2px solid #0A0A0A;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Sora', sans-serif; font-size: 10px; font-weight: 800;
+            color: #0A0A0A;
+          ">${i + 1}</div>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+        });
+
+        L.marker(coords[0], { icon: startIcon })
+          .bindPopup(`
+            <div style="font-family: 'Inter', sans-serif; min-width: 160px;">
+              <strong style="font-family: 'Sora', sans-serif; font-size: 13px;">${event.name}</strong><br/>
+              <span style="font-size: 11px; color: #666;">${event.location} · ${event.distance_km} km</span>
+            </div>
+          `)
+          .addTo(map!);
+      } else if (event.map_lat && event.map_lng) {
+        // Fallback: single point marker
+        const pointIcon = L.divIcon({
+          className: '',
+          html: `<div style="
+            width: 28px; height: 28px;
+            background: ${color};
+            border: 2px solid #0A0A0A;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Sora', sans-serif; font-size: 10px; font-weight: 800;
+            color: #0A0A0A;
+          ">${i + 1}</div>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+        });
+
+        const latlng: [number, number] = [event.map_lat, event.map_lng];
+        L.marker(latlng, { icon: pointIcon })
+          .bindPopup(`
+            <div style="font-family: 'Inter', sans-serif; min-width: 160px;">
+              <strong style="font-family: 'Sora', sans-serif; font-size: 13px;">${event.name}</strong><br/>
+              <span style="font-size: 11px; color: #666;">${event.location} · ${event.distance_km} km</span>
+            </div>
+          `)
+          .addTo(map!);
+
+        bounds.extend(latlng);
+      }
+    });
+
+    // Fit map to show all routes
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [30, 30] });
+    }
+  }
+
+  async function loadEvents() {
+    const today = new Date().toISOString().split('T')[0];
+
+    const { data: events, error } = await supabase
+      .from('events')
+      .select('*')
+      .gte('date', today)
+      .order('date', { ascending: true })
+      .limit(5);
+
+    const container = document.getElementById('events-list');
+    if (!container) return;
+
+    initMap();
+
+    if (error || !events?.length) {
+      container.innerHTML = `
+        <div class="flex items-center justify-center bg-dark-800 px-5 py-10 rounded-xl">
+          <span class="font-body text-sm text-gray-500">No hay eventos próximos programados.</span>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = events.map((event, i) => {
+      const date = new Date(event.date + 'T00:00:00');
+      const dayNum = String(date.getDate()).padStart(2, '0');
+      const dayName = DAY_NAMES[date.getDay()];
+      const dayFull = DAY_FULL[date.getDay()];
+      const time = event.time.slice(0, 5);
+      const level = LEVEL_LABELS[event.level] || event.level;
+      const color = ROUTE_COLORS[i % ROUTE_COLORS.length];
+      const isLast = i === events.length - 1;
+
+      return `
+        <a href="/evento?id=${event.id}" class="flex items-center gap-4 bg-dark-800 px-5 py-6 transition-colors hover:bg-dark-750 cursor-pointer ${!isLast ? 'border-b border-dark-700' : ''}" data-event-index="${i}">
+          <div class="flex w-14 flex-col items-center gap-0.5">
+            <span class="font-heading text-[28px] font-extrabold" style="color: ${color}">${dayNum}</span>
+            <span class="font-body text-[10px] font-bold tracking-[2px] text-gray-600">${dayName}</span>
+          </div>
+          <div class="h-12 w-px bg-dark-700"></div>
+          <div class="flex flex-1 flex-col gap-1">
+            <span class="font-heading text-base font-bold text-white">${event.name}</span>
+            <span class="font-body text-xs font-medium text-gray-400">${dayFull} ${time} · ${event.location} · ${level}</span>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600">
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </a>
+      `;
+    }).join('');
+
+    // Draw routes on the map
+    renderRoutes(events);
+
+    // Click event list item → zoom to that route
+    container.querySelectorAll<HTMLElement>('[data-event-index]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const idx = Number(el.dataset.eventIndex);
+        const event = events[idx];
+        if (!event || !map) return;
+
+        const coords: [number, number][] = event.route_coordinates || [];
+        if (coords.length > 0) {
+          map.fitBounds(L.latLngBounds(coords), { padding: [40, 40], maxZoom: 15 });
+        } else if (event.map_lat && event.map_lng) {
+          map.setView([event.map_lat, event.map_lng], 15);
+        }
+      });
+    });
+  }
+
+  loadEvents();
+  document.addEventListener('astro:after-swap', loadEvents);
+</script>

@@ -1,0 +1,120 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import MetricsSection from '../components/MetricsSection.astro';
+import ProfileSection from '../components/ProfileSection.astro';
+import EventsSection from '../components/EventsSection.astro';
+import LeaderboardSection from '../components/LeaderboardSection.astro';
+import SponsorsSection from '../components/SponsorsSection.astro';
+import CtaSection from '../components/CtaSection.astro';
+import Footer from '../components/Footer.astro';
+import AuthRegisterModal from '../components/AuthRegisterModal.astro';
+import AuthLoginModal from '../components/AuthLoginModal.astro';
+---
+
+<Layout>
+  <Header />
+  <main>
+    <Hero />
+    <MetricsSection />
+    <ProfileSection />
+    <EventsSection />
+    <LeaderboardSection />
+    <SponsorsSection />
+    <CtaSection />
+  </main>
+  <Footer />
+  <AuthRegisterModal />
+  <AuthLoginModal />
+</Layout>
+
+<script>
+  function setupModals() {
+    // Open modal
+    document.querySelectorAll<HTMLElement>('[data-open-modal]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const modalId = btn.dataset.openModal!;
+        document.getElementById(modalId)?.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    // Close modal
+    document.querySelectorAll<HTMLElement>('[data-close-modal]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const modalId = btn.dataset.closeModal!;
+        document.getElementById(modalId)?.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Switch between modals
+    document.querySelectorAll<HTMLElement>('[data-switch-to]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.switchTo!;
+        // Close all modals
+        document.querySelectorAll('#register-modal, #login-modal').forEach((m) => m.classList.remove('active'));
+        // Open target
+        document.getElementById(targetId)?.classList.add('active');
+      });
+    });
+
+    // Close on backdrop click
+    document.querySelectorAll('#register-modal, #login-modal').forEach((modal) => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('#register-modal, #login-modal').forEach((m) => m.classList.remove('active'));
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Toggle password visibility
+    document.querySelectorAll('.toggle-password').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const input = btn.closest('.flex')?.querySelector('input') as HTMLInputElement | null;
+        if (!input) return;
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        btn.querySelector('.eye-off')?.classList.toggle('hidden');
+        btn.querySelector('.eye')?.classList.toggle('hidden');
+      });
+    });
+  }
+
+  setupModals();
+  document.addEventListener('astro:after-swap', setupModals);
+</script>
+
+<script>
+  import { getUser, onAuthStateChange } from '../lib/auth';
+
+  function setupAuthElements() {
+    const guestOnly = document.querySelectorAll<HTMLElement>('[data-auth-guest-only]');
+    const userOnly = document.querySelectorAll<HTMLElement>('[data-auth-user-only]');
+
+    function toggle(user: any) {
+      guestOnly.forEach((el) => {
+        el.style.display = user ? 'none' : '';
+      });
+      userOnly.forEach((el) => {
+        el.style.display = user ? 'flex' : 'none';
+      });
+    }
+
+    getUser().then(toggle);
+    onAuthStateChange(toggle);
+  }
+
+  setupAuthElements();
+  document.addEventListener('astro:after-swap', setupAuthElements);
+</script>

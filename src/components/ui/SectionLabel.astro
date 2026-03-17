@@ -1,0 +1,16 @@
+---
+interface Props {
+  text: string;
+  centered?: boolean;
+}
+
+const { text, centered = true } = Astro.props;
+---
+
+<div class:list={['flex items-center gap-3', { 'justify-center': centered }]}>
+  <span class="block h-0.5 w-6 bg-accent"></span>
+  <span class="font-body text-[11px] font-bold tracking-[3px] text-accent">
+    {text}
+  </span>
+  {centered && <span class="block h-0.5 w-6 bg-accent"></span>}
+</div>

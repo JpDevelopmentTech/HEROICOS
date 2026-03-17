@@ -1,0 +1,112 @@
+---
+const clubLinks = [
+  { label: 'Sobre Nosotros', href: '#' },
+  { label: 'Rutas', href: '#rutas' },
+  { label: 'Calendario', href: '#rutas' },
+  { label: 'Beneficios', href: '#beneficios' },
+];
+
+const legalLinks = [
+  { label: 'Términos y Condiciones', href: '#' },
+  { label: 'Política de Privacidad', href: '#' },
+  { label: 'Cookies', href: '#' },
+];
+
+const contactLinks = [
+  { label: 'hola@heroicosrunclub.com', href: 'mailto:hola@heroicosrunclub.com' },
+  { label: '@heroicosrunclub', href: '#' },
+];
+
+const socialIcons = [
+  {
+    name: 'Instagram',
+    path: '<rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>',
+  },
+  {
+    name: 'Twitter',
+    path: '<path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>',
+  },
+  {
+    name: 'YouTube',
+    path: '<path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/>',
+  },
+];
+---
+
+<footer class="flex flex-col gap-10 bg-dark-950 px-[120px] pb-10 pt-[60px]">
+  <!-- Top -->
+  <div class="flex justify-between">
+    <!-- Brand -->
+    <div class="flex w-[300px] flex-col gap-3">
+      <div class="flex items-center gap-2.5">
+        <img src="/images/logo.png" alt="HEROICOS" class="h-[42px] w-auto" />
+        <span class="font-heading text-lg font-extrabold tracking-[3px] text-white">
+          HEROICOS RUN CLUB
+        </span>
+      </div>
+      <p class="font-body text-[13px] leading-relaxed text-gray-600">
+        La comunidad de running más grande de la ciudad. Cada kilómetro cuenta.
+      </p>
+      <div class="flex gap-4">
+        {
+          socialIcons.map((icon) => (
+            <a href="#" aria-label={icon.name} class="text-gray-600 transition-colors hover:text-accent">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                set:html={icon.path}
+              />
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Columns -->
+    <div class="flex flex-col gap-3">
+      <span class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">CLUB</span>
+      {clubLinks.map((link) => (
+        <a href={link.href} class="font-body text-sm text-gray-400 transition-colors hover:text-white">
+          {link.label}
+        </a>
+      ))}
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <span class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">LEGAL</span>
+      {legalLinks.map((link) => (
+        <a href={link.href} class="font-body text-sm text-gray-400 transition-colors hover:text-white">
+          {link.label}
+        </a>
+      ))}
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <span class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">CONTACTO</span>
+      {contactLinks.map((link) => (
+        <a href={link.href} class="font-body text-sm text-gray-400 transition-colors hover:text-white">
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <hr class="border-dark-800" />
+
+  <!-- Bottom -->
+  <div class="flex items-center justify-between">
+    <span class="font-body text-xs text-gray-600">
+      &copy; 2026 Desarrollado por JP Development
+    </span>
+    <span class="font-heading text-[13px] italic font-semibold text-accent/25">
+      "La línea de meta es solo el comienzo."
+    </span>
+  </div>
+</footer>

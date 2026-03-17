@@ -1,0 +1,281 @@
+---
+import SectionLabel from './ui/SectionLabel.astro';
+---
+
+<section class="flex flex-col items-center gap-12 bg-dark-950 px-[120px] py-20">
+  <!-- Header -->
+  <div class="flex w-full flex-col items-center gap-4">
+    <SectionLabel text="RANKING" />
+    <h2 class="text-center font-heading text-5xl font-extrabold italic leading-none tracking-[-1.5px] text-white">
+      LOS MEJORES<br />DEL CLUB.
+    </h2>
+    <p class="max-w-[600px] text-center font-body text-base leading-relaxed text-gray-400">
+      Conoce a los corredores con los mejores tiempos y puntajes del club.
+      Compite, mejora y sube en el ranking.
+    </p>
+  </div>
+
+  <!-- Tabs -->
+  <div id="lb-tabs" class="flex gap-2">
+    <button data-tab="5" class="lb-tab lb-tab-active rounded-full px-6 py-2.5 font-body text-[13px] font-semibold transition-colors">5K</button>
+    <button data-tab="10" class="lb-tab rounded-full px-6 py-2.5 font-body text-[13px] font-semibold transition-colors border border-dark-700 bg-dark-800 text-gray-400 hover:border-gray-600">10K</button>
+    <button data-tab="21" class="lb-tab rounded-full px-6 py-2.5 font-body text-[13px] font-semibold transition-colors border border-dark-700 bg-dark-800 text-gray-400 hover:border-gray-600">21K</button>
+    <button data-tab="points" class="lb-tab rounded-full px-6 py-2.5 font-body text-[13px] font-semibold transition-colors border border-dark-700 bg-dark-800 text-gray-400 hover:border-gray-600">Puntos Totales</button>
+  </div>
+
+  <!-- Table -->
+  <div id="lb-table" class="w-full overflow-hidden rounded-xl border border-dark-700 bg-dark-800">
+    <!-- Header Row -->
+    <div class="flex h-14 items-center bg-[#141414] px-6">
+      <span class="w-20 font-body text-xs font-bold tracking-[1px] text-gray-500">#</span>
+      <span class="flex-1 font-body text-xs font-bold tracking-[1px] text-gray-500">CORREDOR</span>
+      <span id="lb-time-header" class="w-40 text-right font-body text-xs font-bold tracking-[1px] text-gray-500">MEJOR TIEMPO</span>
+      <span class="w-[120px] text-right font-body text-xs font-bold tracking-[1px] text-gray-500">PUNTOS</span>
+    </div>
+
+    <!-- Skeleton -->
+    <div id="lb-skeleton" class="animate-pulse">
+      <div class="flex h-[72px] items-center px-6 gap-3">
+        <div class="w-20"><div class="h-5 w-8 rounded bg-dark-700"></div></div>
+        <div class="h-10 w-10 rounded-full bg-dark-700"></div>
+        <div class="flex-1 flex flex-col gap-1"><div class="h-4 w-32 rounded bg-dark-700"></div><div class="h-3 w-20 rounded bg-dark-700"></div></div>
+        <div class="w-40 flex justify-end"><div class="h-5 w-16 rounded bg-dark-700"></div></div>
+        <div class="w-[120px] flex justify-end"><div class="h-5 w-14 rounded bg-dark-700"></div></div>
+      </div>
+      <hr class="border-dark-700" />
+      <div class="flex h-[72px] items-center px-6 gap-3">
+        <div class="w-20"><div class="h-5 w-8 rounded bg-dark-700"></div></div>
+        <div class="h-10 w-10 rounded-full bg-dark-700"></div>
+        <div class="flex-1 flex flex-col gap-1"><div class="h-4 w-32 rounded bg-dark-700"></div><div class="h-3 w-20 rounded bg-dark-700"></div></div>
+        <div class="w-40 flex justify-end"><div class="h-5 w-16 rounded bg-dark-700"></div></div>
+        <div class="w-[120px] flex justify-end"><div class="h-5 w-14 rounded bg-dark-700"></div></div>
+      </div>
+      <hr class="border-dark-700" />
+      <div class="flex h-16 items-center px-6 gap-3">
+        <div class="w-20"><div class="h-5 w-8 rounded bg-dark-700"></div></div>
+        <div class="h-9 w-9 rounded-full bg-dark-700"></div>
+        <div class="flex-1 flex flex-col gap-1"><div class="h-4 w-28 rounded bg-dark-700"></div><div class="h-3 w-16 rounded bg-dark-700"></div></div>
+        <div class="w-40 flex justify-end"><div class="h-5 w-14 rounded bg-dark-700"></div></div>
+        <div class="w-[120px] flex justify-end"><div class="h-5 w-12 rounded bg-dark-700"></div></div>
+      </div>
+    </div>
+
+    <!-- Dynamic rows -->
+    <div id="lb-rows" class="hidden"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="flex w-full items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#555555]">
+      <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
+    </svg>
+    <span class="font-body text-[13px] text-[#555555]">
+      Ranking actualizado semanalmente. Basado en tiempos oficiales.
+    </span>
+  </div>
+</section>
+
+<style>
+  .lb-row-gold {
+    background: linear-gradient(90deg, #00f0ff12 0%, #00f0ff00 100%);
+  }
+  .lb-tab-active {
+    background-color: var(--color-accent) !important;
+    color: var(--color-dark-950) !important;
+    font-weight: 700 !important;
+    border: none !important;
+  }
+</style>
+
+<script>
+  import { supabase } from '../lib/supabase';
+
+  const MEDAL_COLORS = ['#FFD700', '#C0C0C0', '#CD7F32'];
+
+  function formatTime(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  function getInitials(first: string, last: string): string {
+    return ((first?.[0] || '') + (last?.[0] || '')).toUpperCase();
+  }
+
+  function trophySvg(color: string): string {
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`;
+  }
+
+  function medalSvg(color: string): string {
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/><path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/><path d="M12 18v-2h-.5"/></svg>`;
+  }
+
+  interface RunnerRow {
+    rank: number;
+    first_name: string;
+    last_name: string;
+    avatar_url: string | null;
+    races_completed: number;
+    time_display: string;
+    points: number;
+  }
+
+  function renderRows(runners: RunnerRow[]): string {
+    if (runners.length === 0) {
+      return `<div class="flex items-center justify-center py-10"><span class="font-body text-sm text-gray-500">No hay datos disponibles para esta categoría.</span></div>`;
+    }
+
+    return runners.map((runner, i) => {
+      const isTop3 = runner.rank <= 3;
+      const color = isTop3 ? MEDAL_COLORS[runner.rank - 1] : '';
+      const initials = getInitials(runner.first_name, runner.last_name);
+      const fullName = `${runner.first_name} ${runner.last_name}`.trim();
+
+      if (isTop3) {
+        const icon = runner.rank === 1 ? trophySvg(color) : medalSvg(color);
+        const avatar = runner.avatar_url
+          ? `<img src="${runner.avatar_url}" alt="${fullName}" class="h-10 w-10 rounded-full object-cover border-2" style="border-color: ${color}" />`
+          : `<div class="flex h-10 w-10 items-center justify-center rounded-full border-2" style="border-color: ${color}; background-color: ${color}22"><span class="font-body text-[13px] font-extrabold" style="color: ${color}">${initials}</span></div>`;
+
+        return `
+          <div class="flex h-[72px] items-center px-6 ${runner.rank === 1 ? 'lb-row-gold' : ''}">
+            <div class="flex w-20 items-center gap-2">
+              ${icon}
+              <span class="font-heading text-lg font-extrabold" style="color: ${color}">${runner.rank}</span>
+            </div>
+            <div class="flex flex-1 items-center gap-3">
+              ${avatar}
+              <div class="flex flex-col gap-0.5">
+                <span class="font-body text-[15px] font-bold text-white">${fullName}</span>
+                <span class="font-body text-xs text-gray-500">${runner.races_completed} carreras</span>
+              </div>
+            </div>
+            <span class="w-40 text-right font-heading text-lg font-bold ${runner.rank === 1 ? 'text-accent' : 'text-white'}">${runner.time_display}</span>
+            <span class="w-[120px] text-right font-heading text-base font-bold text-white">${runner.points.toLocaleString()}</span>
+          </div>
+          ${i < runners.length - 1 ? '<hr class="border-dark-700" />' : ''}
+        `;
+      } else {
+        const avatar = runner.avatar_url
+          ? `<img src="${runner.avatar_url}" alt="${fullName}" class="h-9 w-9 rounded-full object-cover" />`
+          : `<div class="flex h-9 w-9 items-center justify-center rounded-full bg-dark-700"><span class="font-body text-xs font-bold text-gray-500">${initials}</span></div>`;
+
+        return `
+          <div class="flex h-16 items-center px-6">
+            <div class="flex w-20 items-center">
+              <span class="font-heading text-base font-bold text-[#555555]">${runner.rank}</span>
+            </div>
+            <div class="flex flex-1 items-center gap-3">
+              ${avatar}
+              <div class="flex flex-col gap-0.5">
+                <span class="font-body text-sm font-semibold text-gray-200">${fullName}</span>
+                <span class="font-body text-xs text-[#555555]">${runner.races_completed} carreras</span>
+              </div>
+            </div>
+            <span class="w-40 text-right font-heading text-base font-semibold text-gray-300">${runner.time_display}</span>
+            <span class="w-[120px] text-right font-heading text-[15px] font-semibold text-gray-300">${runner.points.toLocaleString()}</span>
+          </div>
+          ${i < runners.length - 1 ? '<hr class="border-[#222222]" />' : ''}
+        `;
+      }
+    }).join('');
+  }
+
+  async function loadLeaderboard(tab: string) {
+    const skeleton = document.getElementById('lb-skeleton');
+    const rowsEl = document.getElementById('lb-rows');
+    const timeHeader = document.getElementById('lb-time-header');
+    if (!skeleton || !rowsEl || !timeHeader) return;
+
+    skeleton.classList.remove('hidden');
+    rowsEl.classList.add('hidden');
+
+    let runners: RunnerRow[] = [];
+
+    if (tab === 'points') {
+      timeHeader.textContent = 'KM TOTAL';
+
+      const { data } = await supabase
+        .from('leaderboard')
+        .select('*')
+        .order('total_points', { ascending: false });
+
+      if (data) {
+        runners = data.map((r: any, i: number) => ({
+          rank: i + 1,
+          first_name: r.first_name,
+          last_name: r.last_name,
+          avatar_url: r.avatar_url,
+          races_completed: r.races_completed,
+          time_display: `${Math.round(Number(r.total_km))} km`,
+          points: r.total_points,
+        }));
+      }
+    } else {
+      timeHeader.textContent = 'MEJOR TIEMPO';
+      const distanceKm = Number(tab);
+
+      const { data } = await supabase
+        .from('distance_leaderboard')
+        .select('*')
+        .eq('distance_km', distanceKm)
+        .order('best_time_seconds', { ascending: true });
+
+      if (data) {
+        // Get total stats for each runner
+        const userIds = data.map((r: any) => r.user_id);
+        const { data: stats } = await supabase
+          .from('leaderboard')
+          .select('user_id, total_points, races_completed')
+          .in('user_id', userIds);
+
+        const statsMap = new Map((stats || []).map((s: any) => [s.user_id, s]));
+
+        runners = data.map((r: any, i: number) => {
+          const s = statsMap.get(r.user_id) || { total_points: 0, races_completed: 0 };
+          return {
+            rank: i + 1,
+            first_name: r.first_name,
+            last_name: r.last_name,
+            avatar_url: r.avatar_url,
+            races_completed: s.races_completed,
+            time_display: formatTime(r.best_time_seconds),
+            points: s.total_points,
+          };
+        });
+      }
+    }
+
+    // Filter out runners with 0 races
+    runners = runners.filter(r => r.races_completed > 0);
+
+    rowsEl.innerHTML = renderRows(runners);
+    skeleton.classList.add('hidden');
+    rowsEl.classList.remove('hidden');
+  }
+
+  function setupTabs() {
+    const tabs = document.querySelectorAll<HTMLButtonElement>('#lb-tabs .lb-tab');
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.classList.remove('lb-tab-active');
+          t.classList.add('border', 'border-dark-700', 'bg-dark-800', 'text-gray-400', 'hover:border-gray-600');
+        });
+        btn.classList.add('lb-tab-active');
+        btn.classList.remove('border', 'border-dark-700', 'bg-dark-800', 'text-gray-400', 'hover:border-gray-600');
+        loadLeaderboard(btn.dataset.tab!);
+      });
+    });
+  }
+
+  function init() {
+    setupTabs();
+    loadLeaderboard('5');
+  }
+
+  init();
+  document.addEventListener('astro:after-swap', init);
+</script>

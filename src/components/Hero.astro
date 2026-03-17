@@ -1,0 +1,84 @@
+---
+const trustItems = [
+  '5,000+ corredores activos',
+  '100% gratuito',
+  'Todos los niveles',
+];
+---
+
+<section class="relative h-[800px] w-full overflow-hidden">
+  <!-- Background Image -->
+  <img
+    src="/images/hero-bg.jpg"
+    alt="Corredores en la ciudad"
+    class="absolute inset-0 h-full w-full object-cover"
+  />
+
+  <!-- Dark Overlay -->
+  <div class="hero-overlay absolute inset-0"></div>
+
+  <!-- Content -->
+  <div class="relative z-10 flex h-full flex-col justify-center gap-6 px-[120px] pt-[120px]">
+    <span class="block h-1 w-20 rounded-sm bg-accent"></span>
+
+    <h1 class="max-w-[900px] font-heading text-[72px] font-extrabold italic leading-[0.95] tracking-[-2px] text-white">
+      DONDE LA CIUDAD<br />SE CONVIERTE<br />EN PISTA.
+    </h1>
+
+    <p class="max-w-[600px] font-body text-xl leading-relaxed text-gray-400">
+      Súmate a la comunidad de running más grande de la ciudad<br />
+      y lleva tus tiempos al siguiente nivel.
+    </p>
+
+    <!-- CTA Row -->
+    <div class="flex gap-5">
+      <button
+        type="button"
+        data-open-modal="register-modal"
+        data-auth-guest-only
+        class="flex items-center gap-3 rounded bg-accent px-12 py-[18px] transition-opacity hover:opacity-90"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-dark-950">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+        <span class="font-heading text-base font-bold tracking-[2px] text-dark-950">
+          ÚNETE AL CLUB — ES GRATIS
+        </span>
+      </button>
+      <a
+        href="#rutas"
+        class="flex items-center rounded border border-accent/25 px-12 py-[18px] transition-colors hover:border-accent/50"
+      >
+        <span class="font-body text-sm font-semibold tracking-[2px] text-accent">
+          VER RUTAS
+        </span>
+      </a>
+    </div>
+
+    <!-- Trust Line -->
+    <div class="flex items-center gap-6">
+      {
+        trustItems.map((item, i) => (
+          <>
+            {i > 0 && <span class="sr-only">·</span>}
+            <span class="h-2 w-2 rounded-full bg-accent" />
+            <span class="font-body text-[13px] font-medium text-gray-600">
+              {item}
+            </span>
+          </>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-overlay {
+    background: linear-gradient(
+      to right,
+      #0a0a0ae8 0%,
+      #0a0a0a99 50%,
+      #0a0a0ae8 100%
+    );
+  }
+</style>

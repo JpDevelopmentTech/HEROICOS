@@ -1,0 +1,199 @@
+---
+import SectionLabel from './ui/SectionLabel.astro';
+---
+
+<section data-auth-user-only class="hidden flex-col items-center gap-[60px] bg-dark-950 px-[120px] py-[100px]">
+  <!-- Header -->
+  <div class="flex w-full flex-col items-center gap-4">
+    <SectionLabel text="FEATURE" />
+    <h2 class="text-center font-heading text-5xl font-extrabold italic leading-none tracking-[-1.5px] text-white">
+      TU PROGRESO,<br />DIGITALIZADO.
+    </h2>
+    <p class="max-w-[600px] text-center font-body text-base leading-relaxed text-gray-400">
+      Cada kilómetro cuenta. Tu perfil de corredor registra tus Personal Bests,
+      rutas favoritas y evolución en tiempo real.
+    </p>
+  </div>
+
+  <!-- Runner Profile Card -->
+  <div id="profile-card" class="flex w-[900px] flex-col gap-8 rounded-xl border border-dark-700 bg-dark-800 p-10">
+    <!-- Skeleton -->
+    <div id="profile-skeleton" class="flex flex-col gap-8 animate-pulse">
+      <div class="flex w-full items-center gap-5">
+        <div class="h-[72px] w-[72px] rounded-full bg-dark-700"></div>
+        <div class="flex flex-col gap-2">
+          <div class="h-6 w-48 rounded bg-dark-700"></div>
+          <div class="h-4 w-64 rounded bg-dark-700"></div>
+        </div>
+      </div>
+      <hr class="border-dark-700" />
+      <div class="h-4 w-32 rounded bg-dark-700"></div>
+      <div class="flex w-full gap-5">
+        <div class="flex-1 h-28 rounded-lg bg-dark-750"></div>
+        <div class="flex-1 h-28 rounded-lg bg-dark-750"></div>
+        <div class="flex-1 h-28 rounded-lg bg-dark-750"></div>
+      </div>
+      <div class="h-4 w-48 rounded bg-dark-700"></div>
+      <div class="flex h-[120px] items-end gap-2 px-5">
+        <div class="flex-1 h-10 rounded bg-dark-750"></div>
+        <div class="flex-1 h-14 rounded bg-dark-750"></div>
+        <div class="flex-1 h-12 rounded bg-dark-750"></div>
+        <div class="flex-1 h-16 rounded bg-dark-750"></div>
+        <div class="flex-1 h-20 rounded bg-dark-750"></div>
+        <div class="flex-1 h-24 rounded bg-dark-750"></div>
+      </div>
+    </div>
+
+    <!-- Real content (hidden until loaded) -->
+    <div id="profile-content" class="hidden flex-col gap-8"></div>
+  </div>
+</section>
+
+<script>
+  import { supabase } from '../lib/supabase';
+  import { getUser, onAuthStateChange } from '../lib/auth';
+
+  const MONTH_NAMES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  const LEVEL_LABELS: Record<string, string> = {
+    beginner: 'Principiante',
+    intermediate: 'Intermedio',
+    advanced: 'Avanzado',
+  };
+
+  function formatTime(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) {
+      return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  async function loadProfile() {
+    const skeleton = document.getElementById('profile-skeleton');
+    const content = document.getElementById('profile-content');
+    if (!skeleton || !content) return;
+
+    const user = await getUser();
+    if (!user) return;
+
+    // Fetch profile
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    // Fetch leaderboard stats for this user
+    const { data: stats } = await supabase
+      .from('leaderboard')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    // Fetch monthly km
+    const { data: monthlyData } = await supabase
+      .from('monthly_km')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('month', { ascending: true });
+
+    if (!profile || !stats) return;
+
+    const firstName = profile.first_name || '';
+    const lastName = profile.last_name || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+    const level = LEVEL_LABELS[profile.level] || profile.level;
+    const joinDate = new Date(profile.created_at);
+    const joinYear = joinDate.getFullYear();
+    const totalKm = Math.round(Number(stats.total_km));
+
+    // Build personal bests
+    const pbs: { distance: string; time: string; }[] = [];
+    if (stats.best_5k_seconds) pbs.push({ distance: '5K', time: formatTime(stats.best_5k_seconds) });
+    if (stats.best_10k_seconds) pbs.push({ distance: '10K', time: formatTime(stats.best_10k_seconds) });
+    if (stats.best_21k_seconds) pbs.push({ distance: '21K', time: formatTime(stats.best_21k_seconds) });
+
+    // Build chart bars (last 6 months)
+    const now = new Date();
+    const months: { month: string; km: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const found = monthlyData?.find((m: any) => m.month?.startsWith(key));
+      months.push({
+        month: MONTH_NAMES[d.getMonth()],
+        km: found ? Number(found.km) : 0,
+      });
+    }
+    const maxKm = Math.max(...months.map(m => m.km), 1);
+
+    // Avatar
+    const avatarHtml = profile.avatar_url
+      ? `<img src="${profile.avatar_url}" alt="${fullName}" class="h-[72px] w-[72px] rounded-full object-cover" />`
+      : `<div class="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-accent/20 font-heading text-2xl font-bold text-accent">${((firstName[0] || '') + (lastName[0] || '')).toUpperCase()}</div>`;
+
+    // PBs HTML
+    const pbsHtml = pbs.length > 0
+      ? pbs.map(pb => `
+          <div class="flex flex-1 flex-col items-center gap-2 rounded-lg bg-dark-750 px-5 py-6">
+            <span class="font-heading text-sm font-bold tracking-[2px] text-accent">${pb.distance}</span>
+            <span class="font-heading text-4xl font-extrabold tracking-[-1.5px] text-white">${pb.time}</span>
+          </div>
+        `).join('')
+      : `<div class="flex flex-1 items-center justify-center rounded-lg bg-dark-750 px-5 py-6">
+           <span class="font-body text-sm text-gray-500">Aún no tienes tiempos registrados</span>
+         </div>`;
+
+    // Chart HTML
+    const barsHtml = months.map((m, i) => {
+      const isLast = i === months.length - 1;
+      const isPrev = i === months.length - 2;
+      const height = m.km > 0 ? Math.max(8, Math.round((m.km / maxKm) * 100)) : 4;
+      const bgColor = isLast ? 'bg-accent' : isPrev ? 'bg-[#1A3A3A]' : 'bg-dark-750';
+      const labelColor = isLast ? 'text-accent' : 'text-gray-600';
+      const kmLabel = m.km > 0 ? `<span class="font-body text-[10px] font-bold ${labelColor}">${Math.round(m.km)}</span>` : '';
+      return `
+        <div class="flex flex-1 flex-col items-center justify-end gap-1.5">
+          ${kmLabel}
+          <div class="w-full rounded ${bgColor}" style="height: ${height}px"></div>
+          <span class="font-body text-[10px] font-medium ${labelColor}">${m.month}</span>
+        </div>
+      `;
+    }).join('');
+
+    content.innerHTML = `
+      <!-- Profile Top -->
+      <div class="flex w-full items-center gap-5">
+        ${avatarHtml}
+        <div class="flex flex-col gap-1">
+          <span class="font-heading text-[22px] font-bold tracking-[-0.5px] text-white">${fullName}</span>
+          <span class="font-body text-[13px] font-medium text-gray-400">
+            Miembro desde ${joinYear} · Nivel: ${level} · ${totalKm} km total
+          </span>
+        </div>
+      </div>
+
+      <hr class="border-dark-700" />
+
+      <!-- Personal Bests -->
+      <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">PERSONAL BESTS</span>
+      <div class="flex w-full gap-5">${pbsHtml}</div>
+
+      <!-- Progress Chart -->
+      <div class="flex w-full flex-col gap-3">
+        <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">PROGRESIÓN MENSUAL (KM)</span>
+        <div class="flex h-[120px] items-end gap-2 px-5">${barsHtml}</div>
+      </div>
+    `;
+
+    skeleton.classList.add('hidden');
+    content.classList.remove('hidden');
+    content.classList.add('flex');
+  }
+
+  loadProfile();
+  document.addEventListener('astro:after-swap', loadProfile);
+  onAuthStateChange(() => loadProfile());
+</script>

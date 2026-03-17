@@ -1,0 +1,184 @@
+---
+const navLinks = [
+  { label: 'RUTAS', href: '#rutas' },
+  { label: 'BENEFICIOS', href: '#beneficios' },
+  { label: 'COMUNIDAD', href: '#comunidad' },
+];
+---
+
+<header class="sticky top-0 z-50 flex items-center justify-between bg-dark-950/90 px-20 py-5 backdrop-blur-md">
+  <a href="/">
+    <img src="/images/logo.png" alt="HEROICOS Run Club" class="h-8 w-auto" />
+  </a>
+
+  <nav class="flex items-center gap-10">
+    {
+      navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="font-body text-[13px] font-semibold tracking-[2px] text-gray-400 transition-colors hover:text-white"
+        >
+          {link.label}
+        </a>
+      ))
+    }
+
+    <!-- Guest buttons (shown when not logged in) -->
+    <div id="auth-guest" class="flex items-center gap-10">
+      <button
+        type="button"
+        data-open-modal="login-modal"
+        class="font-body text-[13px] font-semibold tracking-[2px] text-gray-400 transition-colors hover:text-white"
+      >
+        INICIAR SESIÓN
+      </button>
+      <button
+        type="button"
+        data-open-modal="register-modal"
+        class="rounded bg-accent px-6 py-2.5 font-body text-[13px] font-bold tracking-[2px] text-dark-950 transition-opacity hover:opacity-90"
+      >
+        ÚNETE
+      </button>
+    </div>
+
+    <!-- User menu (shown when logged in) -->
+    <div id="auth-user" class="hidden items-center gap-4">
+      <div class="flex items-center gap-3">
+        <label for="header-avatar-input" class="group relative flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-accent/20 font-heading text-sm font-bold text-accent" id="user-avatar" title="Cambiar foto de perfil">
+          <!-- Initials or photo go here -->
+          <div class="absolute inset-0 flex items-center justify-center bg-dark-950/60 opacity-0 transition-opacity group-hover:opacity-100">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+          </div>
+        </label>
+        <input type="file" id="header-avatar-input" accept="image/png,image/jpeg,image/webp" class="hidden" />
+        <span id="user-name" class="font-body text-sm font-medium text-white"></span>
+      </div>
+      <button
+        type="button"
+        id="logout-btn"
+        class="flex items-center gap-2 rounded-lg border border-dark-700 bg-dark-800 px-4 py-2 font-body text-[12px] font-semibold tracking-[1px] text-gray-400 transition-colors hover:border-gray-600 hover:text-white"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        SALIR
+      </button>
+    </div>
+  </nav>
+</header>
+
+<script>
+  import { signOut, getUser, onAuthStateChange, updateAvatar, uploadPendingAvatar } from '../lib/auth';
+  import { supabase } from '../lib/supabase';
+
+  function setupAuthUI() {
+    const guestEl = document.getElementById('auth-guest');
+    const userEl = document.getElementById('auth-user');
+    const avatarEl = document.getElementById('user-avatar');
+    const nameEl = document.getElementById('user-name');
+    const logoutBtn = document.getElementById('logout-btn');
+    const avatarInput = document.getElementById('header-avatar-input') as HTMLInputElement | null;
+
+    function setAvatarImage(url: string, alt: string) {
+      if (!avatarEl) return;
+      // Keep the hover overlay, replace content before it
+      const overlay = avatarEl.querySelector('div');
+      const existingImg = avatarEl.querySelector('img');
+      const existingText = avatarEl.childNodes[0];
+      if (existingImg) existingImg.remove();
+      if (existingText?.nodeType === Node.TEXT_NODE) existingText.remove();
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = alt;
+      img.className = 'h-full w-full object-cover';
+      avatarEl.insertBefore(img, overlay);
+    }
+
+    function setAvatarInitials(initials: string) {
+      if (!avatarEl) return;
+      const overlay = avatarEl.querySelector('div');
+      const existingImg = avatarEl.querySelector('img');
+      if (existingImg) existingImg.remove();
+      // Set text node before overlay
+      const textNodes = Array.from(avatarEl.childNodes).filter(n => n.nodeType === Node.TEXT_NODE);
+      textNodes.forEach(n => n.remove());
+      avatarEl.insertBefore(document.createTextNode(initials), overlay);
+    }
+
+    async function updateUI(user: any) {
+      if (user) {
+        const firstName = user.user_metadata?.first_name || '';
+        const lastName = user.user_metadata?.last_name || '';
+        const initials = ((firstName[0] || '') + (lastName[0] || '')).toUpperCase() || '?';
+        const displayName = firstName ? `${firstName} ${lastName}`.trim() : user.email?.split('@')[0] || '';
+
+        if (nameEl) nameEl.textContent = displayName;
+
+        // Upload pending avatar from registration if any
+        await uploadPendingAvatar();
+
+        // Fetch profile with avatar
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('avatar_url')
+          .eq('id', user.id)
+          .single();
+
+        if (profile?.avatar_url) {
+          setAvatarImage(profile.avatar_url, displayName);
+        } else {
+          setAvatarInitials(initials);
+        }
+
+        guestEl?.classList.add('hidden');
+        guestEl?.classList.remove('flex');
+        userEl?.classList.remove('hidden');
+        userEl?.classList.add('flex');
+      } else {
+        guestEl?.classList.remove('hidden');
+        guestEl?.classList.add('flex');
+        userEl?.classList.add('hidden');
+        userEl?.classList.remove('flex');
+      }
+    }
+
+    // Avatar upload from header
+    avatarInput?.addEventListener('change', async () => {
+      const file = avatarInput.files?.[0];
+      if (!file) return;
+
+      if (file.size > 2 * 1024 * 1024) {
+        alert('La imagen no debe superar 2MB');
+        avatarInput.value = '';
+        return;
+      }
+
+      try {
+        const url = await updateAvatar(file);
+        if (url) {
+          setAvatarImage(url, 'Avatar');
+        }
+      } catch (e) {
+        console.error('Avatar update failed:', e);
+      }
+      avatarInput.value = '';
+    });
+
+    // Check initial auth state
+    getUser().then(updateUI);
+
+    // Listen for auth changes
+    onAuthStateChange(updateUI);
+
+    // Logout handler
+    logoutBtn?.addEventListener('click', async () => {
+      try {
+        await signOut();
+        updateUI(null);
+      } catch (err) {
+        console.error('Error signing out:', err);
+      }
+    });
+  }
+
+  setupAuthUI();
+  document.addEventListener('astro:after-swap', setupAuthUI);
+</script>

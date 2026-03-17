@@ -1,0 +1,1036 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AuthRegisterModal from '../components/AuthRegisterModal.astro';
+import AuthLoginModal from '../components/AuthLoginModal.astro';
+---
+
+<Layout>
+  <Header />
+
+  <!-- Breadcrumb -->
+  <div class="flex items-center gap-2 bg-dark-950 px-20 py-4">
+    <a href="/#rutas" class="flex items-center gap-2 text-accent transition-opacity hover:opacity-80">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      <span class="font-body text-[13px] font-medium">Volver a Eventos</span>
+    </a>
+    <span class="text-[13px] text-gray-600">/</span>
+    <span id="breadcrumb-name" class="font-body text-[13px] font-medium text-gray-400">Cargando...</span>
+  </div>
+
+  <main>
+    <!-- Map Hero Section -->
+    <section class="relative h-[500px] w-full overflow-hidden">
+      <div id="event-map-hero" class="absolute inset-0 z-0"></div>
+      <div class="pointer-events-none absolute inset-0 z-10" style="background: linear-gradient(to bottom, #0A0A0A00 0%, #0A0A0ACC 100%)"></div>
+
+      <!-- Route Stats Bar -->
+      <div id="stats-bar" class="absolute bottom-5 left-20 z-20 flex items-center gap-8 rounded-xl bg-dark-950/80 px-6 py-4 backdrop-blur-sm">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
+          <span id="stat-distance" class="font-heading text-sm font-bold text-white">—</span>
+        </div>
+        <div class="h-5 w-px bg-gray-600"></div>
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="m8 3 4 8 5-5 2 15H2L8 3z"/></svg>
+          <span id="stat-elevation" class="font-heading text-sm font-bold text-white">—</span>
+        </div>
+        <div class="h-5 w-px bg-gray-600"></div>
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+          <span id="stat-pace" class="font-heading text-sm font-bold text-white">—</span>
+        </div>
+        <div class="h-5 w-px bg-gray-600"></div>
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
+          <span id="stat-time" class="font-heading text-sm font-bold text-white">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Race Info Section -->
+    <section class="flex gap-[60px] bg-dark-950 px-20 py-[60px]">
+      <!-- Left Column -->
+      <div class="flex flex-1 flex-col gap-8">
+        <!-- Date Badge -->
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+          <span id="event-date-badge" class="font-body text-xs font-bold tracking-[2px] text-accent">—</span>
+        </div>
+
+        <!-- Title -->
+        <h1 id="event-title" class="max-w-[600px] font-heading text-[42px] font-extrabold italic leading-[1.05] tracking-[-1.5px] text-white">
+          Cargando...
+        </h1>
+
+        <!-- Description -->
+        <p id="event-description" class="max-w-[560px] font-body text-base leading-relaxed text-gray-400">
+        </p>
+
+        <!-- Tags -->
+        <div id="event-tags" class="flex gap-3"></div>
+
+        <!-- Location -->
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="event-location" class="font-body text-sm font-medium text-gray-400">—</span>
+        </div>
+      </div>
+
+      <!-- RSVP Card -->
+      <div class="flex w-[400px] shrink-0 flex-col gap-6 rounded-xl border border-dark-700 bg-dark-800 p-8">
+        <!-- RSVP Mode (future events) -->
+        <div id="rsvp-mode">
+          <div class="flex flex-col gap-6">
+            <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">VAS A ASISTIR?</span>
+            <span class="font-heading text-[22px] font-bold text-white">Confirma tu lugar</span>
+            <p class="font-body text-sm leading-relaxed text-gray-400">
+              Los cupos son limitados. Confirma tu asistencia para reservar tu puesto en el grupo.
+            </p>
+
+            <!-- Buttons -->
+            <div id="rsvp-buttons" class="flex gap-3">
+              <button
+                id="btn-attend"
+                data-auth-user-only
+                class="hidden flex-1 items-center justify-center gap-2.5 rounded bg-accent py-4 font-heading text-sm font-extrabold tracking-[1px] text-dark-950 transition-opacity hover:opacity-90"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                VOY
+              </button>
+              <button
+                id="btn-not-attend"
+                data-auth-user-only
+                class="hidden items-center justify-center gap-2.5 rounded border border-gray-600 px-6 py-4 font-heading text-sm font-bold tracking-[1px] text-gray-600 transition-colors hover:border-gray-400 hover:text-gray-400"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                NO VOY
+              </button>
+              <button
+                data-auth-guest-only
+                data-open-modal="register-modal"
+                class="flex flex-1 items-center justify-center gap-2.5 rounded bg-accent py-4 font-heading text-sm font-extrabold tracking-[1px] text-dark-950 transition-opacity hover:opacity-90"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+                REGÍSTRATE PARA ASISTIR
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Mode (past events, user confirmed) -->
+        <div id="results-mode" class="hidden">
+          <!-- Results Form -->
+          <div id="results-form" class="hidden flex-col gap-5">
+            <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">REGISTRA TUS RESULTADOS</span>
+            <span class="font-heading text-[20px] font-bold text-white">Como te fue?</span>
+
+            <div class="flex flex-col gap-4">
+              <!-- Finish status -->
+              <div class="flex gap-2">
+                <button type="button" id="status-completed" class="result-status-btn flex-1 rounded-lg border-2 border-accent bg-accent/10 px-3 py-2.5 font-body text-xs font-bold text-accent">TERMINÉ</button>
+                <button type="button" id="status-dnf" class="result-status-btn flex-1 rounded-lg border border-dark-700 bg-dark-750 px-3 py-2.5 font-body text-xs font-bold text-gray-500">NO TERMINÉ</button>
+              </div>
+
+              <!-- Time inputs -->
+              <div id="time-fields" class="flex flex-col gap-2">
+                <label class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">TIEMPO FINAL</label>
+                <div class="flex gap-2">
+                  <div class="flex flex-1 flex-col gap-1">
+                    <input type="number" id="res-hours" min="0" max="23" placeholder="0" class="w-full rounded-lg border border-dark-700 bg-dark-750 px-3 py-2.5 text-center font-heading text-lg font-bold text-white placeholder:text-gray-600 focus:border-accent focus:outline-none" />
+                    <span class="text-center font-body text-[10px] text-gray-600">Horas</span>
+                  </div>
+                  <span class="flex items-center pt-0 font-heading text-xl font-bold text-gray-600">:</span>
+                  <div class="flex flex-1 flex-col gap-1">
+                    <input type="number" id="res-minutes" min="0" max="59" placeholder="00" class="w-full rounded-lg border border-dark-700 bg-dark-750 px-3 py-2.5 text-center font-heading text-lg font-bold text-white placeholder:text-gray-600 focus:border-accent focus:outline-none" />
+                    <span class="text-center font-body text-[10px] text-gray-600">Minutos</span>
+                  </div>
+                  <span class="flex items-center pt-0 font-heading text-xl font-bold text-gray-600">:</span>
+                  <div class="flex flex-1 flex-col gap-1">
+                    <input type="number" id="res-seconds" min="0" max="59" placeholder="00" class="w-full rounded-lg border border-dark-700 bg-dark-750 px-3 py-2.5 text-center font-heading text-lg font-bold text-white placeholder:text-gray-600 focus:border-accent focus:outline-none" />
+                    <span class="text-center font-body text-[10px] text-gray-600">Segundos</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Distance (for DNF) -->
+              <div id="dnf-distance-field" class="hidden flex-col gap-2">
+                <label class="font-body text-[11px] font-bold tracking-[2px] text-gray-600">KM COMPLETADOS</label>
+                <input type="number" id="res-distance" min="0" step="0.1" placeholder="0.0" class="w-full rounded-lg border border-dark-700 bg-dark-750 px-3 py-2.5 font-heading text-lg font-bold text-white placeholder:text-gray-600 focus:border-accent focus:outline-none" />
+              </div>
+
+              <!-- Save button -->
+              <button type="button" id="btn-save-results" class="mt-1 flex items-center justify-center gap-2.5 rounded bg-accent py-3.5 font-heading text-sm font-extrabold tracking-[1px] text-dark-950 transition-opacity hover:opacity-90">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                GUARDAR RESULTADOS
+              </button>
+
+              <p id="results-error" class="hidden font-body text-xs text-red-400"></p>
+            </div>
+          </div>
+
+          <!-- Results Display (already submitted) -->
+          <div id="results-display" class="hidden flex-col gap-5">
+            <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">TUS RESULTADOS</span>
+
+            <div class="flex flex-col gap-4">
+              <div id="result-status-badge" class="flex items-center gap-2">
+                <!-- Badge rendered by JS -->
+              </div>
+
+              <div class="flex gap-3">
+                <div id="result-time-card" class="flex flex-1 flex-col items-center gap-1 rounded-lg bg-dark-750 py-4">
+                  <span class="font-body text-[10px] font-bold tracking-[2px] text-gray-600">TIEMPO</span>
+                  <span id="result-time-value" class="font-heading text-2xl font-extrabold text-white">—</span>
+                </div>
+                <div class="flex flex-1 flex-col items-center gap-1 rounded-lg bg-dark-750 py-4">
+                  <span class="font-body text-[10px] font-bold tracking-[2px] text-gray-600">RITMO</span>
+                  <span id="result-pace-value" class="font-heading text-2xl font-extrabold text-accent">—</span>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <div class="flex flex-1 flex-col items-center gap-1 rounded-lg bg-dark-750 py-4">
+                  <span class="font-body text-[10px] font-bold tracking-[2px] text-gray-600">DISTANCIA</span>
+                  <span id="result-distance-value" class="font-heading text-2xl font-extrabold text-white">—</span>
+                </div>
+                <div class="flex flex-1 flex-col items-center gap-1 rounded-lg bg-dark-750 py-4">
+                  <span class="font-body text-[10px] font-bold tracking-[2px] text-gray-600">PUNTOS</span>
+                  <span id="result-points-value" class="font-heading text-2xl font-extrabold text-white">—</span>
+                </div>
+              </div>
+
+              <button type="button" id="btn-edit-results" class="flex items-center justify-center gap-2 rounded border border-dark-700 bg-dark-750 py-2.5 font-body text-xs font-semibold text-gray-400 transition-colors hover:border-gray-600 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
+                EDITAR RESULTADOS
+              </button>
+            </div>
+          </div>
+
+          <!-- Not registered message -->
+          <div id="results-not-registered" class="hidden flex-col items-center gap-3 py-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span class="font-body text-sm text-gray-500 text-center">No confirmaste asistencia a este evento.</span>
+          </div>
+        </div>
+
+        <div class="h-px w-full bg-dark-700"></div>
+
+        <!-- Attendees -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span class="font-body text-xs font-medium text-gray-400">Confirmados</span>
+          </div>
+          <span id="rsvp-count" class="font-heading text-base font-bold text-white">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Details Section -->
+    <section class="flex gap-[60px] bg-dark-900 px-20 py-[60px]">
+      <!-- Left: Description + Elevation -->
+      <div class="flex flex-1 flex-col gap-10">
+        <!-- About -->
+        <div class="flex flex-col gap-4">
+          <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">SOBRE LA CARRERA</span>
+          <div id="event-about" class="font-body text-[15px] leading-[1.7] text-gray-300 [&>p]:mb-4"></div>
+        </div>
+
+        <!-- Elevation Profile -->
+        <div class="flex flex-col gap-4">
+          <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">PERFIL DE ELEVACIÓN</span>
+          <div class="flex h-[140px] items-end gap-1 rounded-lg border border-dark-700 bg-dark-800 px-6 py-5" id="elevation-chart">
+            <!-- Bars rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Cards -->
+      <div class="flex w-[400px] shrink-0 flex-col gap-8">
+        <!-- What to Bring -->
+        <div class="flex flex-col gap-4 rounded-xl border border-dark-700 bg-dark-800 p-6">
+          <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">QUÉ TRAER</span>
+          <div id="what-to-bring" class="flex flex-col gap-3"></div>
+        </div>
+
+        <!-- Group Leaders -->
+        <div class="flex flex-col gap-5 rounded-xl border border-dark-700 bg-dark-800 p-6">
+          <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">LÍDERES DE GRUPO</span>
+          <div id="group-leaders" class="flex flex-col gap-4"></div>
+        </div>
+
+        <!-- Confirmed Runners -->
+        <div class="flex flex-col gap-4 rounded-xl border border-dark-700 bg-dark-800 p-6">
+          <span class="font-body text-[11px] font-bold tracking-[3px] text-gray-600">CORREDORES CONFIRMADOS</span>
+          <div id="confirmed-runners" class="flex flex-col gap-3">
+            <!-- Avatar stack + names rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <AuthRegisterModal />
+  <AuthLoginModal />
+</Layout>
+
+<script>
+  import { supabase } from '../lib/supabase';
+  import { getUser, onAuthStateChange } from '../lib/auth';
+  import L from 'leaflet';
+  import 'leaflet/dist/leaflet.css';
+
+  const DAY_FULL = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  const LEVEL_LABELS: Record<string, string> = {
+    beginner: 'Principiante',
+    intermediate: 'Intermedio',
+    advanced: 'Avanzado',
+    all: 'Todos los niveles',
+  };
+  const TYPE_LABELS: Record<string, string> = {
+    training: 'Entrenamiento',
+    race: 'Carrera',
+    social: 'Social',
+  };
+
+  // Items to bring per event type
+  const BRING_ITEMS: Record<string, { icon: string; text: string }[]> = {
+    training: [
+      { icon: '<path d="M20.38 3.46 16 2 12 3.46l-4-1.46-4.38 1.46a.77.77 0 0 0-.54.73V20a.77.77 0 0 0 .54.73L8 22l4-1.46 4 1.46 4.38-1.46a.77.77 0 0 0 .54-.73V4.19a.77.77 0 0 0-.46-.73z"/><path d="M8 2v20"/><path d="M16 2v20"/>', text: 'Ropa reflectante (corremos de noche)' },
+      { icon: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>', text: 'Hidratación propia' },
+      { icon: '<path d="M18 6 6 18"/><path d="M8 18h10V8"/>', text: 'Luz frontal o de brazo' },
+      { icon: '<path d="M4 16v-2.38C4 11.5 2.97 9.5 3 8c.03-1.5.43-2.99 2-4 1.58-1.01 2.93-.6 4 .5s2.07 2 3 2 1.93-.9 3-2 2.42-1.51 4-.5c1.57 1.01 1.97 2.5 2 4 .03 1.5-1 3.5-1 5.62V16"/><path d="M12 22v-8"/>', text: 'Zapatillas de running' },
+    ],
+    race: [
+      { icon: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>', text: 'Hidratación (habrá puntos de agua)' },
+      { icon: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>', text: 'Identificación oficial' },
+      { icon: '<path d="M4 16v-2.38C4 11.5 2.97 9.5 3 8c.03-1.5.43-2.99 2-4 1.58-1.01 2.93-.6 4 .5s2.07 2 3 2 1.93-.9 3-2 2.42-1.51 4-.5c1.57 1.01 1.97 2.5 2 4 .03 1.5-1 3.5-1 5.62V16"/><path d="M12 22v-8"/>', text: 'Zapatillas de competencia' },
+      { icon: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>', text: 'Reporte médico si tienes condiciones' },
+    ],
+    social: [
+      { icon: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>', text: 'Hidratación propia' },
+      { icon: '<path d="M4 16v-2.38C4 11.5 2.97 9.5 3 8c.03-1.5.43-2.99 2-4 1.58-1.01 2.93-.6 4 .5s2.07 2 3 2 1.93-.9 3-2 2.42-1.51 4-.5c1.57 1.01 1.97 2.5 2 4 .03 1.5-1 3.5-1 5.62V16"/><path d="M12 22v-8"/>', text: 'Zapatillas cómodas' },
+      { icon: '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/>', text: 'Buena vibra y ganas de conocer gente' },
+    ],
+  };
+
+  let map: L.Map | null = null;
+
+  function initHeroMap(event: any) {
+    const mapEl = document.getElementById('event-map-hero');
+    if (!mapEl) return;
+
+    if (map) { map.remove(); map = null; }
+
+    const coords: [number, number][] = event.route_coordinates || [];
+    const center: [number, number] = coords.length > 0
+      ? coords[Math.floor(coords.length / 2)]
+      : [event.map_lat || 20.97, event.map_lng || -89.62];
+
+    map = L.map(mapEl, {
+      zoomControl: false,
+      attributionControl: false,
+      dragging: true,
+      scrollWheelZoom: false,
+    }).setView(center, 14);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    if (coords.length > 0) {
+      const polyline = L.polyline(coords, {
+        color: '#00F0FF',
+        weight: 4,
+        opacity: 0.9,
+        lineJoin: 'round',
+        lineCap: 'round',
+      }).addTo(map);
+
+      // Start pin
+      const startIcon = L.divIcon({
+        className: '',
+        html: `<div style="display:flex;align-items:center;gap:6px;background:#00F0FFE6;border-radius:20px;padding:6px 14px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+          <span style="font-family:Inter,sans-serif;font-size:11px;font-weight:700;color:#0A0A0A;">Salida</span>
+        </div>`,
+        iconSize: [90, 32],
+        iconAnchor: [12, 16],
+      });
+      L.marker(coords[0], { icon: startIcon }).addTo(map);
+
+      // End pin
+      const endIcon = L.divIcon({
+        className: '',
+        html: `<div style="display:flex;align-items:center;gap:6px;background:#00F0FFE6;border-radius:20px;padding:6px 14px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V2l10 5-10 5"/></svg>
+          <span style="font-family:Inter,sans-serif;font-size:11px;font-weight:700;color:#0A0A0A;">Meta</span>
+        </div>`,
+        iconSize: [80, 32],
+        iconAnchor: [12, 16],
+      });
+      L.marker(coords[coords.length - 1], { icon: endIcon }).addTo(map);
+
+      // Mid pin
+      if (coords.length > 4) {
+        const midIdx = Math.floor(coords.length / 2);
+        const midKm = Math.round(event.distance_km / 2);
+        const midIcon = L.divIcon({
+          className: '',
+          html: `<div style="display:flex;align-items:center;gap:6px;background:#FFFFFF33;border-radius:20px;padding:6px 14px;backdrop-filter:blur(4px);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span style="font-family:Inter,sans-serif;font-size:11px;font-weight:700;color:#FFFFFF;">KM ${midKm}</span>
+          </div>`,
+          iconSize: [90, 32],
+          iconAnchor: [45, 16],
+        });
+        L.marker(coords[midIdx], { icon: midIcon }).addTo(map);
+      }
+
+      map.fitBounds(polyline.getBounds(), { padding: [60, 60] });
+    }
+  }
+
+  function renderEvent(event: any) {
+    const date = new Date(event.date + 'T00:00:00');
+    const dayFull = DAY_FULL[date.getDay()];
+    const dayNum = String(date.getDate()).padStart(2, '0');
+    const month = MONTH_NAMES[date.getMonth()];
+    const time = event.time.slice(0, 5);
+    const level = LEVEL_LABELS[event.level] || event.level;
+    const eventType = TYPE_LABELS[event.event_type] || event.event_type;
+
+    // Breadcrumb
+    const breadcrumb = document.getElementById('breadcrumb-name');
+    if (breadcrumb) breadcrumb.textContent = event.name;
+
+    // Page title
+    document.title = `${event.name} — HEROICOS`;
+
+    // Date badge
+    const dateBadge = document.getElementById('event-date-badge');
+    if (dateBadge) dateBadge.textContent = `${dayFull.toUpperCase()} ${dayNum} DE ${month.toUpperCase()} · ${time} HRS`;
+
+    // Title
+    const title = document.getElementById('event-title');
+    if (title) title.textContent = event.name.toUpperCase().replace(' — ', '\n— ');
+
+    // Description
+    const desc = document.getElementById('event-description');
+    if (desc) desc.textContent = event.description || '';
+
+    // Tags
+    const tagsEl = document.getElementById('event-tags');
+    if (tagsEl) {
+      const tags = [
+        { text: level, accent: true },
+        { text: eventType, accent: false },
+        { text: `${event.distance_km} km`, accent: false },
+      ];
+      tagsEl.innerHTML = tags.map((t) => `
+        <span class="rounded-full px-4 py-2 font-body text-xs font-semibold ${
+          t.accent
+            ? 'bg-accent/15 text-accent ring-1 ring-accent/30'
+            : 'bg-white/5 text-gray-300 ring-1 ring-white/10'
+        }">${t.text}</span>
+      `).join('');
+    }
+
+    // Location
+    const locEl = document.getElementById('event-location');
+    if (locEl) locEl.textContent = `Punto de encuentro: ${event.location}`;
+
+    // Stats bar
+    const distance = document.getElementById('stat-distance');
+    if (distance) distance.textContent = `${event.distance_km} KM`;
+
+    const elevation = document.getElementById('stat-elevation');
+    if (elevation) elevation.textContent = `${Math.round(event.distance_km * 8)}m Elevación`;
+
+    const pace = document.getElementById('stat-pace');
+    if (pace) pace.textContent = event.level === 'advanced' ? 'Ritmo ~4:30/km' : event.level === 'intermediate' ? 'Ritmo ~5:30/km' : 'Ritmo libre';
+
+    const time_est = document.getElementById('stat-time');
+    if (time_est) time_est.textContent = `~${Math.round(event.distance_km * 5.5)} min`;
+
+    // About section (multi-paragraph)
+    const aboutEl = document.getElementById('event-about');
+    if (aboutEl && event.description) {
+      aboutEl.innerHTML = event.description.split('\n').filter(Boolean).map((p: string) => `<p>${p}</p>`).join('');
+    }
+
+    // Elevation chart
+    const chartEl = document.getElementById('elevation-chart');
+    if (chartEl) {
+      const barCount = 12;
+      const bars = Array.from({ length: barCount }, (_, i) => {
+        const mid = barCount / 2;
+        const dist = Math.abs(i - mid) / mid;
+        const height = 20 + (1 - dist) * 65 + Math.random() * 10;
+        const opacity = 0.3 + (1 - dist) * 0.7;
+        return `<div class="flex-1 rounded-sm" style="height:${Math.round(height)}px;background:rgba(0,240,255,${opacity.toFixed(2)})"></div>`;
+      });
+      chartEl.innerHTML = bars.join('');
+    }
+
+    // What to bring
+    const bringEl = document.getElementById('what-to-bring');
+    if (bringEl) {
+      const items = BRING_ITEMS[event.event_type] || BRING_ITEMS.training;
+      bringEl.innerHTML = items.map((item) => `
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-accent">${item.icon}</svg>
+          <span class="font-body text-[13px] font-medium text-gray-300">${item.text}</span>
+        </div>
+      `).join('');
+    }
+
+    // Group leaders (placeholder data)
+    const leadersEl = document.getElementById('group-leaders');
+    if (leadersEl) {
+      const leaders = [
+        { name: 'Carlos Méndez', role: 'Pace: 5:00 min/km · Grupo Rápido', initials: 'CM' },
+        { name: 'Ana Rodríguez', role: 'Pace: 5:45 min/km · Grupo Medio', initials: 'AR' },
+      ];
+      leadersEl.innerHTML = leaders.map((l) => `
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-accent bg-accent/15">
+            <span class="font-body text-[13px] font-extrabold text-accent">${l.initials}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="font-heading text-sm font-semibold text-white">${l.name}</span>
+            <span class="font-body text-xs font-medium text-gray-400">${l.role}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Init map
+    initHeroMap(event);
+  }
+
+  // ── RSVP, Results & Confirmed Runners ──
+
+  let currentEventId: string | null = null;
+  let currentUser: any = null;
+  let currentEvent: any = null;
+  let currentRegistration: any = null;
+
+  async function loadConfirmedRunners() {
+    if (!currentEventId) return;
+
+    const { data: registrations } = await supabase
+      .from('event_registrations')
+      .select('user_id, profiles!event_registrations_user_id_profiles_fkey(first_name, last_name, avatar_url)')
+      .eq('event_id', currentEventId)
+      .eq('status', 'confirmed');
+
+    const runners = registrations || [];
+    const count = runners.length;
+
+    // Update RSVP count
+    const rsvpCount = document.getElementById('rsvp-count');
+    if (rsvpCount) rsvpCount.textContent = String(count);
+
+    // Update confirmed runners section
+    const runnersEl = document.getElementById('confirmed-runners');
+    if (!runnersEl) return;
+
+    if (count === 0) {
+      runnersEl.innerHTML = `<span class="font-body text-sm text-gray-500">Aún no hay corredores confirmados. Sé el primero!</span>`;
+      return;
+    }
+
+    const names = runners.map((r: any) => {
+      const p = r.profiles;
+      return p ? `${p.first_name || ''} ${p.last_name || ''}`.trim() : 'Corredor';
+    });
+
+    const avatarData = runners.map((r: any) => {
+      const p = r.profiles;
+      const f = p?.first_name?.[0] || '';
+      const l = p?.last_name?.[0] || '';
+      return {
+        initials: (f + l).toUpperCase() || '?',
+        avatar_url: p?.avatar_url || null,
+      };
+    });
+
+    const maxShow = 5;
+    const shown = avatarData.slice(0, maxShow);
+    const remaining = count - maxShow;
+
+    const avatarsHtml = shown.map((a: any, i: number) => {
+      const ml = i > 0 ? 'margin-left:-10px' : '';
+      if (a.avatar_url) {
+        return `<img src="${a.avatar_url}" alt="" class="h-9 w-9 shrink-0 rounded-full border-2 border-dark-900 object-cover" style="${ml}" />`;
+      }
+      return `<div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-dark-900 bg-accent/15 font-body text-[11px] font-bold text-accent" style="${ml}">${a.initials}</div>`;
+    }).join('');
+
+    const moreHtml = remaining > 0
+      ? `<div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-accent bg-accent/15" style="margin-left:-10px"><span class="font-body text-[11px] font-bold text-accent">+${remaining}</span></div>`
+      : '';
+
+    const shownNames = names.slice(0, 4);
+    const extraCount = count - shownNames.length;
+    const namesText = extraCount > 0
+      ? `${shownNames.join(', ')} y ${extraCount} más...`
+      : shownNames.join(', ');
+
+    runnersEl.innerHTML = `
+      <div class="flex items-center">${avatarsHtml}${moreHtml}</div>
+      <span class="font-body text-xs font-medium text-gray-400">${namesText}</span>
+    `;
+  }
+
+  async function loadUserRsvpStatus() {
+    if (!currentUser || !currentEventId) return;
+
+    const { data } = await supabase
+      .from('event_registrations')
+      .select('status')
+      .eq('event_id', currentEventId)
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+
+    updateRsvpButtons(data?.status || null);
+  }
+
+  function updateRsvpButtons(status: string | null) {
+    const btnAttend = document.getElementById('btn-attend');
+    const btnNot = document.getElementById('btn-not-attend');
+    if (!btnAttend || !btnNot) return;
+
+    // Reset styles
+    btnAttend.className = 'flex flex-1 items-center justify-center gap-2.5 rounded py-4 font-heading text-sm font-extrabold tracking-[1px] transition-opacity hover:opacity-90';
+    btnNot.className = 'flex items-center justify-center gap-2.5 rounded border px-6 py-4 font-heading text-sm font-bold tracking-[1px] transition-colors';
+
+    if (status === 'confirmed') {
+      // VOY is active
+      btnAttend.classList.add('bg-accent', 'text-dark-950');
+      btnNot.classList.add('border-dark-700', 'text-gray-600', 'hover:border-gray-400', 'hover:text-gray-400');
+    } else if (status === 'cancelled') {
+      // NO VOY is active
+      btnAttend.classList.add('bg-dark-750', 'text-gray-400');
+      btnNot.classList.add('border-red-500/50', 'bg-red-500/10', 'text-red-400');
+    } else {
+      // No selection yet
+      btnAttend.classList.add('bg-accent', 'text-dark-950');
+      btnNot.classList.add('border-gray-600', 'text-gray-600', 'hover:border-gray-400', 'hover:text-gray-400');
+    }
+  }
+
+  async function handleRsvp(status: 'confirmed' | 'cancelled') {
+    if (!currentUser || !currentEventId) return;
+
+    const btnAttend = document.getElementById('btn-attend') as HTMLButtonElement;
+    const btnNot = document.getElementById('btn-not-attend') as HTMLButtonElement;
+    btnAttend.disabled = true;
+    btnNot.disabled = true;
+
+    await supabase
+      .from('event_registrations')
+      .upsert({
+        event_id: currentEventId,
+        user_id: currentUser.id,
+        status,
+      }, { onConflict: 'event_id,user_id' });
+
+    updateRsvpButtons(status);
+    await loadConfirmedRunners();
+
+    btnAttend.disabled = false;
+    btnNot.disabled = false;
+  }
+
+  function setupRsvpButtons() {
+    document.getElementById('btn-attend')?.addEventListener('click', () => handleRsvp('confirmed'));
+    document.getElementById('btn-not-attend')?.addEventListener('click', () => handleRsvp('cancelled'));
+  }
+
+  // ── Results Recording ──
+
+  function isEventPast(event: any): boolean {
+    const eventDate = new Date(event.date + 'T23:59:59');
+    return eventDate < new Date();
+  }
+
+  function formatTimeDisplay(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  function calculatePace(totalSeconds: number, distanceKm: number): string {
+    if (!distanceKm || distanceKm <= 0) return '—';
+    const paceSeconds = totalSeconds / distanceKm;
+    const paceMin = Math.floor(paceSeconds / 60);
+    const paceSec = Math.round(paceSeconds % 60);
+    return `${paceMin}:${String(paceSec).padStart(2, '0')}`;
+  }
+
+  function calculatePoints(position: number | null, totalRunners: number, finished: boolean): number {
+    if (!finished) return 0;
+    // Base points for finishing + bonus based on position
+    const basePoints = 50;
+    if (!position || position <= 0) return basePoints;
+    const positionBonus = Math.max(0, (totalRunners - position + 1) * 10);
+    return basePoints + positionBonus;
+  }
+
+  function showResultsMode() {
+    const rsvpMode = document.getElementById('rsvp-mode');
+    const resultsMode = document.getElementById('results-mode');
+    if (rsvpMode) rsvpMode.classList.add('hidden');
+    if (resultsMode) resultsMode.classList.remove('hidden');
+  }
+
+  function showRsvpMode() {
+    const rsvpMode = document.getElementById('rsvp-mode');
+    const resultsMode = document.getElementById('results-mode');
+    if (rsvpMode) rsvpMode.classList.remove('hidden');
+    if (resultsMode) resultsMode.classList.add('hidden');
+  }
+
+  function showResultsForm(prefill?: any) {
+    const form = document.getElementById('results-form');
+    const display = document.getElementById('results-display');
+    const notReg = document.getElementById('results-not-registered');
+    form?.classList.remove('hidden'); form?.classList.add('flex');
+    display?.classList.add('hidden'); display?.classList.remove('flex');
+    notReg?.classList.add('hidden'); notReg?.classList.remove('flex');
+
+    if (prefill) {
+      const h = Math.floor((prefill.finish_time_seconds || 0) / 3600);
+      const m = Math.floor(((prefill.finish_time_seconds || 0) % 3600) / 60);
+      const s = (prefill.finish_time_seconds || 0) % 60;
+      (document.getElementById('res-hours') as HTMLInputElement).value = h > 0 ? String(h) : '';
+      (document.getElementById('res-minutes') as HTMLInputElement).value = String(m);
+      (document.getElementById('res-seconds') as HTMLInputElement).value = String(s);
+
+      const isDnf = prefill.status === 'dnf';
+      setResultStatus(isDnf ? 'dnf' : 'completed');
+      if (isDnf && prefill.distance_completed_km) {
+        (document.getElementById('res-distance') as HTMLInputElement).value = String(prefill.distance_completed_km);
+      }
+    }
+  }
+
+  function showResultsDisplay(reg: any) {
+    const form = document.getElementById('results-form');
+    const display = document.getElementById('results-display');
+    const notReg = document.getElementById('results-not-registered');
+    form?.classList.add('hidden'); form?.classList.remove('flex');
+    display?.classList.remove('hidden'); display?.classList.add('flex');
+    notReg?.classList.add('hidden'); notReg?.classList.remove('flex');
+
+    const badge = document.getElementById('result-status-badge');
+    if (badge) {
+      if (reg.status === 'completed') {
+        badge.innerHTML = `<span class="rounded-full bg-green-500/15 px-3 py-1 font-body text-xs font-bold text-green-400">COMPLETADO</span>`;
+      } else if (reg.status === 'dnf') {
+        badge.innerHTML = `<span class="rounded-full bg-orange-500/15 px-3 py-1 font-body text-xs font-bold text-orange-400">NO TERMINÓ (DNF)</span>`;
+      }
+    }
+
+    const timeVal = document.getElementById('result-time-value');
+    if (timeVal) timeVal.textContent = reg.finish_time_seconds ? formatTimeDisplay(reg.finish_time_seconds) : '—';
+
+    const paceVal = document.getElementById('result-pace-value');
+    if (paceVal) paceVal.textContent = reg.pace_avg ? `${reg.pace_avg}/km` : '—';
+
+    const distVal = document.getElementById('result-distance-value');
+    if (distVal) distVal.textContent = `${Number(reg.distance_completed_km || 0)} km`;
+
+    const ptsVal = document.getElementById('result-points-value');
+    if (ptsVal) ptsVal.textContent = String(reg.points_earned || 0);
+  }
+
+  function showResultsNotRegistered() {
+    const form = document.getElementById('results-form');
+    const display = document.getElementById('results-display');
+    const notReg = document.getElementById('results-not-registered');
+    form?.classList.add('hidden'); form?.classList.remove('flex');
+    display?.classList.add('hidden'); display?.classList.remove('flex');
+    notReg?.classList.remove('hidden'); notReg?.classList.add('flex');
+  }
+
+  let selectedResultStatus: 'completed' | 'dnf' = 'completed';
+
+  function setResultStatus(status: 'completed' | 'dnf') {
+    selectedResultStatus = status;
+    const btnCompleted = document.getElementById('status-completed');
+    const btnDnf = document.getElementById('status-dnf');
+    const timeFields = document.getElementById('time-fields');
+    const dnfField = document.getElementById('dnf-distance-field');
+
+    if (status === 'completed') {
+      btnCompleted?.classList.add('border-accent', 'bg-accent/10', 'text-accent');
+      btnCompleted?.classList.remove('border-dark-700', 'bg-dark-750', 'text-gray-500');
+      btnCompleted?.classList.replace('border', 'border-2');
+      btnDnf?.classList.remove('border-accent', 'bg-accent/10', 'text-accent', 'border-2');
+      btnDnf?.classList.add('border-dark-700', 'bg-dark-750', 'text-gray-500', 'border');
+      dnfField?.classList.add('hidden'); dnfField?.classList.remove('flex');
+    } else {
+      btnDnf?.classList.add('border-orange-500', 'bg-orange-500/10', 'text-orange-400');
+      btnDnf?.classList.remove('border-dark-700', 'bg-dark-750', 'text-gray-500');
+      btnDnf?.classList.replace('border', 'border-2');
+      btnCompleted?.classList.remove('border-accent', 'bg-accent/10', 'text-accent', 'border-2');
+      btnCompleted?.classList.add('border-dark-700', 'bg-dark-750', 'text-gray-500', 'border');
+      dnfField?.classList.remove('hidden'); dnfField?.classList.add('flex');
+    }
+  }
+
+  async function saveResults() {
+    if (!currentUser || !currentEventId || !currentEvent) return;
+
+    const errEl = document.getElementById('results-error');
+    const saveBtn = document.getElementById('btn-save-results') as HTMLButtonElement;
+
+    const hours = parseInt((document.getElementById('res-hours') as HTMLInputElement).value) || 0;
+    const minutes = parseInt((document.getElementById('res-minutes') as HTMLInputElement).value) || 0;
+    const seconds = parseInt((document.getElementById('res-seconds') as HTMLInputElement).value) || 0;
+    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+    const status = selectedResultStatus;
+    let distanceKm: number;
+
+    if (status === 'completed') {
+      distanceKm = Number(currentEvent.distance_km);
+      if (totalSeconds <= 0) {
+        if (errEl) { errEl.textContent = 'Ingresa tu tiempo final.'; errEl.classList.remove('hidden'); }
+        return;
+      }
+    } else {
+      distanceKm = parseFloat((document.getElementById('res-distance') as HTMLInputElement).value) || 0;
+      if (distanceKm <= 0) {
+        if (errEl) { errEl.textContent = 'Ingresa los kilómetros que completaste.'; errEl.classList.remove('hidden'); }
+        return;
+      }
+    }
+
+    const paceAvg = totalSeconds > 0 && distanceKm > 0 ? calculatePace(totalSeconds, distanceKm) : null;
+
+    // Get total confirmed runners for points calculation
+    const { count } = await supabase
+      .from('event_registrations')
+      .select('*', { count: 'exact', head: true })
+      .eq('event_id', currentEventId)
+      .in('status', ['confirmed', 'completed']);
+
+    const totalRunners = count || 1;
+
+    // Calculate position for completed runners
+    let position: number | null = null;
+    if (status === 'completed' && totalSeconds > 0) {
+      const { data: fasterRunners } = await supabase
+        .from('event_registrations')
+        .select('id')
+        .eq('event_id', currentEventId)
+        .eq('status', 'completed')
+        .lt('finish_time_seconds', totalSeconds)
+        .neq('user_id', currentUser.id);
+
+      position = (fasterRunners?.length || 0) + 1;
+    }
+
+    const points = calculatePoints(position, totalRunners, status === 'completed');
+
+    if (errEl) errEl.classList.add('hidden');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'GUARDANDO...';
+
+    const { error } = await supabase
+      .from('event_registrations')
+      .upsert({
+        event_id: currentEventId,
+        user_id: currentUser.id,
+        status,
+        finish_time_seconds: totalSeconds > 0 ? totalSeconds : null,
+        pace_avg: paceAvg,
+        points_earned: points,
+        position,
+        distance_completed_km: distanceKm,
+      }, { onConflict: 'event_id,user_id' });
+
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> GUARDAR RESULTADOS`;
+
+    if (error) {
+      if (errEl) { errEl.textContent = 'Error al guardar. Intenta de nuevo.'; errEl.classList.remove('hidden'); }
+      return;
+    }
+
+    // Reload registration and show display
+    const { data: reg } = await supabase
+      .from('event_registrations')
+      .select('*')
+      .eq('event_id', currentEventId)
+      .eq('user_id', currentUser.id)
+      .single();
+
+    if (reg) {
+      currentRegistration = reg;
+      showResultsDisplay(reg);
+    }
+  }
+
+  function setupResultsUI() {
+    document.getElementById('status-completed')?.addEventListener('click', () => setResultStatus('completed'));
+    document.getElementById('status-dnf')?.addEventListener('click', () => setResultStatus('dnf'));
+    document.getElementById('btn-save-results')?.addEventListener('click', saveResults);
+    document.getElementById('btn-edit-results')?.addEventListener('click', () => {
+      showResultsForm(currentRegistration);
+    });
+  }
+
+  async function checkResultsMode(event: any) {
+    if (!isEventPast(event)) {
+      showRsvpMode();
+      return;
+    }
+
+    // Event is in the past — show results mode
+    showResultsMode();
+
+    if (!currentUser) {
+      showResultsNotRegistered();
+      return;
+    }
+
+    // Check user's registration
+    const { data: reg } = await supabase
+      .from('event_registrations')
+      .select('*')
+      .eq('event_id', event.id)
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+
+    currentRegistration = reg;
+
+    if (!reg || reg.status === 'cancelled') {
+      showResultsNotRegistered();
+    } else if (reg.status === 'completed' || reg.status === 'dnf') {
+      showResultsDisplay(reg);
+    } else {
+      // status = 'confirmed' but event passed — show form
+      showResultsForm();
+    }
+  }
+
+  // ── Page Load ──
+
+  async function loadEventPage() {
+    const params = new URLSearchParams(window.location.search);
+    const eventId = params.get('id');
+
+    if (!eventId) {
+      window.location.href = '/#rutas';
+      return;
+    }
+
+    currentEventId = eventId;
+
+    const { data: event, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('id', eventId)
+      .single();
+
+    if (error || !event) {
+      window.location.href = '/#rutas';
+      return;
+    }
+
+    currentEvent = event;
+    renderEvent(event);
+    await loadConfirmedRunners();
+
+    // Check if user is logged in and load their RSVP status
+    currentUser = await getUser();
+    if (currentUser) {
+      await loadUserRsvpStatus();
+    }
+
+    // Check if we should show results mode (past events)
+    await checkResultsMode(event);
+  }
+
+  // Auth visibility
+  function setupAuthElements() {
+    const guestOnly = document.querySelectorAll<HTMLElement>('[data-auth-guest-only]');
+    const userOnly = document.querySelectorAll<HTMLElement>('[data-auth-user-only]');
+
+    function toggle(user: any) {
+      currentUser = user;
+      guestOnly.forEach((el) => { el.style.display = user ? 'none' : ''; });
+      userOnly.forEach((el) => { el.style.display = user ? 'flex' : 'none'; });
+      if (user) {
+        loadUserRsvpStatus();
+        if (currentEvent) checkResultsMode(currentEvent);
+      }
+    }
+
+    getUser().then(toggle);
+    onAuthStateChange(toggle);
+  }
+
+  // Modal setup (same as index)
+  function setupModals() {
+    document.querySelectorAll<HTMLElement>('[data-open-modal]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const modalId = btn.dataset.openModal!;
+        document.getElementById(modalId)?.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+    document.querySelectorAll<HTMLElement>('[data-close-modal]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const modalId = btn.dataset.closeModal!;
+        document.getElementById(modalId)?.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    });
+    document.querySelectorAll<HTMLElement>('[data-switch-to]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.switchTo!;
+        document.querySelectorAll('#register-modal, #login-modal').forEach((m) => m.classList.remove('active'));
+        document.getElementById(targetId)?.classList.add('active');
+      });
+    });
+    document.querySelectorAll('#register-modal, #login-modal').forEach((modal) => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) { modal.classList.remove('active'); document.body.style.overflow = ''; }
+      });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('#register-modal, #login-modal').forEach((m) => m.classList.remove('active'));
+        document.body.style.overflow = '';
+      }
+    });
+    document.querySelectorAll('.toggle-password').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const input = btn.closest('.flex')?.querySelector('input') as HTMLInputElement | null;
+        if (!input) return;
+        input.type = input.type === 'password' ? 'text' : 'password';
+        btn.querySelector('.eye-off')?.classList.toggle('hidden');
+        btn.querySelector('.eye')?.classList.toggle('hidden');
+      });
+    });
+  }
+
+  loadEventPage();
+  setupAuthElements();
+  setupRsvpButtons();
+  setupResultsUI();
+  setupModals();
+  document.addEventListener('astro:after-swap', () => { loadEventPage(); setupAuthElements(); setupRsvpButtons(); setupResultsUI(); setupModals(); });
+</script>
