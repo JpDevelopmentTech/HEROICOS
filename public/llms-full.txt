@@ -1,0 +1,85 @@
+# HEROICOS Run Club - Documentacion completa
+
+> La comunidad de running mas grande de la ciudad. Cada kilometro cuenta.
+
+## Acerca de HEROICOS
+
+HEROICOS Run Club es un club de running urbano ubicado en Cartagena, Colombia. Organiza entrenamientos grupales, carreras y eventos sociales para corredores de todos los niveles. La membresia es 100% gratuita.
+
+El club se enfoca en construir comunidad a traves del deporte, ofreciendo rutas variadas por la ciudad, lideres de grupo para diferentes ritmos, y un sistema de puntos y clasificacion que motiva a los corredores a mejorar constantemente.
+
+## Estructura del sitio
+
+### Pagina principal (/)
+La landing page contiene las siguientes secciones:
+- **Hero**: Encabezado principal con llamado a accion para unirse al club
+- **Comunidad en numeros**: Metricas en tiempo real (corredores registrados, eventos realizados, kilometros recorridos)
+- **Perfil de corredor**: Muestra el perfil del usuario con sus estadisticas personales
+- **Calendario de eventos**: Lista de proximos eventos con mapa interactivo Leaflet mostrando las rutas
+- **Tabla de clasificacion**: Rankings de corredores por puntos
+- **Patrocinadores**: Logos de empresas patrocinadoras
+- **CTA final**: Seccion de llamado a accion para registrarse
+
+### Pagina de evento (/evento?id=UUID)
+Pagina de detalle de cada evento que incluye:
+- **Mapa de ruta**: Mapa interactivo con la ruta del evento, marcadores de salida, punto medio y meta
+- **Barra de estadisticas**: Distancia, elevacion, ritmo estimado, tiempo estimado
+- **Informacion del evento**: Fecha, titulo, descripcion, tags (nivel, tipo, distancia), ubicacion
+- **Sistema RSVP**: Botones para confirmar/cancelar asistencia con control de cupos parametrizado
+- **Seccion de detalles**: Descripcion extendida, perfil de elevacion, que traer, lideres de grupo, corredores confirmados
+- **Registro de resultados**: Para eventos pasados, formulario para registrar tiempo, ritmo y distancia
+
+## Sistema de usuarios
+
+### Registro
+Los usuarios se registran con:
+- Email y contrasena
+- Nombre y apellido
+- Telefono
+- Fecha de nacimiento
+- Nivel de experiencia (principiante, intermedio, avanzado)
+- Contacto de emergencia
+- Foto de perfil (opcional)
+
+### Funcionalidades de usuario
+- Confirmar asistencia a eventos (RSVP)
+- Registrar resultados despues de cada evento
+- Ver su perfil con estadisticas acumuladas
+- Participar en la tabla de clasificacion
+
+## Sistema de eventos
+
+### Tipos de eventos
+- **Entrenamiento**: Sesiones de practica grupal
+- **Carrera**: Competencias con registro de tiempos
+- **Social**: Eventos recreativos para la comunidad
+
+### Niveles
+- **Principiante**: Ritmo libre
+- **Intermedio**: Ritmo aproximado de 5:30/km
+- **Avanzado**: Ritmo aproximado de 4:30/km
+- **Todos los niveles**: Abierto a cualquier corredor
+
+### Control de cupos
+Cada evento puede tener un numero maximo de participantes (total_spots). El sistema muestra cupos disponibles y bloquea nuevas inscripciones cuando se alcanza el limite.
+
+### Resultados
+Despues de cada evento, los corredores pueden registrar:
+- Tiempo final (horas:minutos:segundos)
+- Estado: Completado o DNF (Did Not Finish)
+- Distancia completada (para DNF)
+El sistema calcula automaticamente el ritmo promedio, posicion y puntos ganados.
+
+## Tecnologia
+
+- **Framework**: Astro v6 (generador de sitios estaticos)
+- **Estilos**: Tailwind CSS v4
+- **Backend**: Supabase (autenticacion, base de datos PostgreSQL, almacenamiento)
+- **Mapas**: Leaflet con tiles de CartoDB (tema oscuro)
+- **Fuentes**: Google Fonts (Sora para titulos, Inter para cuerpo)
+
+## Contacto
+
+- Instagram: @heroicosrunclub
+- Comunidad de WhatsApp disponible en el sitio
+- Sitio web: https://heroicosrunclub.com

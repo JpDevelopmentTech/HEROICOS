@@ -11,9 +11,43 @@ import CtaSection from '../components/CtaSection.astro';
 import Footer from '../components/Footer.astro';
 import AuthRegisterModal from '../components/AuthRegisterModal.astro';
 import AuthLoginModal from '../components/AuthLoginModal.astro';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SportsOrganization',
+    name: 'HEROICOS Run Club',
+    description: 'La comunidad de running mas grande de Cartagena, Colombia. Entrenamientos grupales, carreras y eventos para todos los niveles.',
+    url: 'https://heroicosrunclub.com',
+    logo: 'https://heroicosrunclub.com/images/logo.png',
+    image: 'https://heroicosrunclub.com/images/hero-bg.jpg',
+    sport: 'Running',
+    location: {
+      '@type': 'City',
+      name: 'Cartagena',
+      addressCountry: 'CO',
+    },
+    sameAs: [
+      'https://instagram.com/heroicosrunclub',
+    ],
+    isAccessibleForFree: true,
+    memberOf: {
+      '@type': 'Organization',
+      name: 'HEROICOS Run Club',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'HEROICOS Run Club',
+    url: 'https://heroicosrunclub.com',
+    inLanguage: 'es',
+    description: 'Club de running en Cartagena, Colombia. Eventos, entrenamientos y comunidad para corredores.',
+  },
+];
 ---
 
-<Layout>
+<Layout jsonLd={jsonLd}>
   <Header />
   <main>
     <Hero />

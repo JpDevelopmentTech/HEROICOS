@@ -1,0 +1,30 @@
+# HEROICOS Run Club
+
+> La comunidad de running mas grande de la ciudad. Cada kilometro cuenta.
+
+HEROICOS Run Club es un club de running urbano en Cartagena, Colombia que organiza entrenamientos grupales, carreras y eventos sociales para corredores de todos los niveles. Es 100% gratuito.
+
+## Paginas
+
+- [Inicio](https://heroicosrunclub.com/): Pagina principal con informacion del club, estadisticas de la comunidad, proximos eventos, tabla de clasificacion y patrocinadores.
+- [Evento](https://heroicosrunclub.com/evento): Detalle de cada evento con mapa de ruta, perfil de elevacion, sistema RSVP y registro de resultados.
+
+## Informacion del club
+
+- Nombre: HEROICOS Run Club
+- Ubicacion: Cartagena, Colombia
+- Idioma: Espanol
+- Costo: Gratuito
+- Niveles: Principiante, Intermedio, Avanzado
+- Tipos de eventos: Entrenamiento, Carrera, Social
+- Redes sociales: Instagram @heroicosrunclub
+- Comunidad: Grupo de WhatsApp
+
+## Funcionalidades
+
+- Registro e inicio de sesion
+- Calendario de proximos eventos con mapa interactivo
+- Confirmacion de asistencia (RSVP) con control de cupos
+- Registro de resultados (tiempo, ritmo, distancia, puntos)
+- Tabla de clasificacion (leaderboard)
+- Perfiles de corredor con estadisticas

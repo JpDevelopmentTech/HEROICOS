@@ -6,7 +6,10 @@ import AuthRegisterModal from '../components/AuthRegisterModal.astro';
 import AuthLoginModal from '../components/AuthLoginModal.astro';
 ---
 
-<Layout>
+<Layout
+  title="Evento — HEROICOS Run Club"
+  description="Detalles del evento de HEROICOS Run Club en Cartagena. Confirma tu asistencia, consulta la ruta y registra tus resultados."
+>
   <Header />
 
   <!-- Breadcrumb -->
@@ -218,12 +221,25 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
         <div class="h-px w-full bg-dark-700"></div>
 
         <!-- Attendees -->
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span class="font-body text-xs font-medium text-gray-400">Confirmados</span>
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="font-body text-xs font-medium text-gray-400">Confirmados</span>
+            </div>
+            <span id="rsvp-count" class="font-heading text-base font-bold text-white">—</span>
           </div>
-          <span id="rsvp-count" class="font-heading text-base font-bold text-white">—</span>
+          <!-- Capacity bar -->
+          <div id="capacity-bar" class="hidden">
+            <div class="h-2 w-full overflow-hidden rounded-full bg-dark-700">
+              <div id="capacity-fill" class="h-full rounded-full bg-accent transition-all" style="width: 0%"></div>
+            </div>
+            <span id="capacity-label" class="mt-1 block font-body text-[11px] font-medium text-gray-500"></span>
+          </div>
+          <!-- Full badge -->
+          <div id="event-full-badge" class="hidden rounded-lg bg-red-500/10 px-4 py-2.5 text-center">
+            <span class="font-heading text-xs font-bold tracking-[1px] text-red-400">CUPOS AGOTADOS</span>
+          </div>
         </div>
       </div>
     </section>
@@ -408,9 +424,6 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
     const breadcrumb = document.getElementById('breadcrumb-name');
     if (breadcrumb) breadcrumb.textContent = event.name;
 
-    // Page title
-    document.title = `${event.name} — HEROICOS`;
-
     // Date badge
     const dateBadge = document.getElementById('event-date-badge');
     if (dateBadge) dateBadge.textContent = `${dayFull.toUpperCase()} ${dayNum} DE ${month.toUpperCase()} · ${time} HRS`;
@@ -509,6 +522,55 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
       `).join('');
     }
 
+    // Dynamic SEO: update title + meta + inject JSON-LD
+    const seoTitle = `${event.name} — HEROICOS Run Club`;
+    document.title = seoTitle;
+
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', `${event.name} — ${event.description?.slice(0, 140) || `Evento de running en Cartagena. ${event.distance_km} km, ${LEVEL_LABELS[event.level] || event.level}.`}`);
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', seoTitle);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', event.description?.slice(0, 200) || '');
+
+    // Inject Event structured data
+    const eventJsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'SportsEvent',
+      name: event.name,
+      description: event.description || '',
+      startDate: `${event.date}T${event.time}`,
+      location: {
+        '@type': 'Place',
+        name: event.location,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Cartagena',
+          addressCountry: 'CO',
+        },
+      },
+      organizer: {
+        '@type': 'SportsOrganization',
+        name: 'HEROICOS Run Club',
+        url: 'https://heroicosrunclub.com',
+      },
+      isAccessibleForFree: true,
+      eventStatus: 'https://schema.org/EventScheduled',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      ...(event.total_spots ? { maximumAttendeeCapacity: event.total_spots } : {}),
+      image: 'https://heroicosrunclub.com/images/hero-bg.jpg',
+      url: `https://heroicosrunclub.com/evento?id=${event.id}`,
+    };
+    let ldScript = document.getElementById('event-jsonld');
+    if (!ldScript) {
+      ldScript = document.createElement('script');
+      ldScript.id = 'event-jsonld';
+      ldScript.type = 'application/ld+json';
+      document.head.appendChild(ldScript);
+    }
+    ldScript.textContent = JSON.stringify(eventJsonLd);
+
     // Init map
     initHeroMap(event);
   }
@@ -532,9 +594,40 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
     const runners = registrations || [];
     const count = runners.length;
 
-    // Update RSVP count
+    // Update RSVP count and capacity
     const rsvpCount = document.getElementById('rsvp-count');
-    if (rsvpCount) rsvpCount.textContent = String(count);
+    const totalSpots = currentEvent?.total_spots;
+
+    if (rsvpCount) {
+      rsvpCount.textContent = totalSpots ? `${count}/${totalSpots}` : String(count);
+    }
+
+    // Capacity bar
+    const capacityBar = document.getElementById('capacity-bar');
+    const capacityFill = document.getElementById('capacity-fill');
+    const capacityLabel = document.getElementById('capacity-label');
+    const fullBadge = document.getElementById('event-full-badge');
+
+    if (totalSpots && capacityBar && capacityFill && capacityLabel) {
+      capacityBar.classList.remove('hidden');
+      const pct = Math.min((count / totalSpots) * 100, 100);
+      capacityFill.style.width = `${pct}%`;
+      const isFull = count >= totalSpots;
+      capacityFill.className = `h-full rounded-full transition-all ${isFull ? 'bg-red-400' : pct >= 80 ? 'bg-yellow-400' : 'bg-accent'}`;
+      capacityLabel.textContent = isFull
+        ? 'No hay cupos disponibles'
+        : `${totalSpots - count} cupos disponibles`;
+      capacityLabel.className = `mt-1 block font-body text-[11px] font-medium ${isFull ? 'text-red-400' : 'text-gray-500'}`;
+
+      // Show/hide full badge
+      if (fullBadge) fullBadge.classList.toggle('hidden', !isFull);
+
+      // Disable attend button if full and user hasn't already confirmed
+      updateAttendButtonForCapacity(isFull);
+    } else {
+      if (capacityBar) capacityBar.classList.add('hidden');
+      if (fullBadge) fullBadge.classList.add('hidden');
+    }
 
     // Update confirmed runners section
     const runnersEl = document.getElementById('confirmed-runners');
@@ -588,6 +681,23 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
     `;
   }
 
+  function updateAttendButtonForCapacity(isFull: boolean) {
+    const btnAttend = document.getElementById('btn-attend') as HTMLButtonElement | null;
+    if (!btnAttend) return;
+
+    // Don't disable if user already confirmed
+    const isConfirmed = btnAttend.classList.contains('bg-accent') && btnAttend.closest('#rsvp-buttons')?.querySelector('#btn-not-attend')?.classList.contains('border-dark-700');
+
+    // Check current RSVP status - if already confirmed, allow (they already have a spot)
+    if (isFull && !btnAttend.dataset.userConfirmed) {
+      btnAttend.disabled = true;
+      btnAttend.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+      btnAttend.disabled = false;
+      btnAttend.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+  }
+
   async function loadUserRsvpStatus() {
     if (!currentUser || !currentEventId) return;
 
@@ -602,9 +712,16 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
   }
 
   function updateRsvpButtons(status: string | null) {
-    const btnAttend = document.getElementById('btn-attend');
+    const btnAttend = document.getElementById('btn-attend') as HTMLButtonElement | null;
     const btnNot = document.getElementById('btn-not-attend');
     if (!btnAttend || !btnNot) return;
+
+    // Track confirmed state for capacity logic
+    if (status === 'confirmed') {
+      btnAttend.dataset.userConfirmed = 'true';
+    } else {
+      delete btnAttend.dataset.userConfirmed;
+    }
 
     // Reset styles
     btnAttend.className = 'flex flex-1 items-center justify-center gap-2.5 rounded py-4 font-heading text-sm font-extrabold tracking-[1px] transition-opacity hover:opacity-90';
@@ -632,6 +749,22 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
     const btnNot = document.getElementById('btn-not-attend') as HTMLButtonElement;
     btnAttend.disabled = true;
     btnNot.disabled = true;
+
+    // Check capacity before confirming
+    if (status === 'confirmed' && currentEvent?.total_spots) {
+      const { count } = await supabase
+        .from('event_registrations')
+        .select('*', { count: 'exact', head: true })
+        .eq('event_id', currentEventId)
+        .eq('status', 'confirmed');
+
+      if ((count || 0) >= currentEvent.total_spots) {
+        btnAttend.disabled = false;
+        btnNot.disabled = false;
+        await loadConfirmedRunners();
+        return;
+      }
+    }
 
     await supabase
       .from('event_registrations')

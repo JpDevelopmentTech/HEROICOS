@@ -4,29 +4,89 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  jsonLd?: Record<string, any> | Record<string, any>[];
 }
 
 const {
-  title = 'HEROICOS Run Club',
-  description = 'La comunidad de running más grande de la ciudad. Cada kilómetro cuenta.',
+  title = 'HEROICOS Run Club — La comunidad de running de Cartagena',
+  description = 'Unete a HEROICOS Run Club, la comunidad de running mas grande de Cartagena, Colombia. Entrenamientos grupales, carreras y eventos para todos los niveles. 100% gratis.',
+  image = '/images/hero-bg.jpg',
+  type = 'website',
+  noindex = false,
+  jsonLd,
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://heroicosrunclub.com');
+const imageURL = new URL(image, Astro.site || 'https://heroicosrunclub.com').href;
 ---
 
 <!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonicalURL.href} />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- Indexing -->
+    {noindex ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : (
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    )}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:site_name" content="HEROICOS Run Club" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageURL} />
+
+    <!-- Additional SEO -->
+    <meta name="theme-color" content="#00F0FF" />
+    <meta name="author" content="HEROICOS Run Club" />
+    <meta name="geo.region" content="CO-BOL" />
+    <meta name="geo.placename" content="Cartagena" />
+    <link rel="alternate" hreflang="es" href={canonicalURL.href} />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:ital,wght@0,400;0,600;0,700;0,800;1,700;1,800&display=swap"
       rel="stylesheet"
     />
-    <title>{title}</title>
+
+    <!-- Structured Data -->
+    {jsonLd && (
+      Array.isArray(jsonLd) ? (
+        jsonLd.map((schema) => (
+          <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+        ))
+      ) : (
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+      )
+    )}
+
+    <meta name="generator" content={Astro.generator} />
   </head>
   <body>
     <slot />
