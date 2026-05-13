@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="HEROICOS – Registrando resultado..."
+  description="Registra tu tiempo en la carrera de HEROICOS Run Club."
+>
+  <div class="min-h-screen bg-dark-950 flex flex-col items-center justify-center gap-6">
+    <img src="/images/logo.png" alt="HEROICOS Run Club" class="h-14 opacity-90" />
+    <div class="flex flex-col items-center gap-2">
+      <div class="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+      <p id="status-msg" class="font-body text-gray-400 text-sm">Cargando carrera...</p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+
+  const supabase = createClient(
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  async function redirectToLatestEvent() {
+    const msg = document.getElementById('status-msg');
+
+    const { data, error } = await supabase
+      .from('events')
+      .select('id')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (data?.id) {
+      window.location.href = `/evento?id=${data.id}`;
+    } else {
+      if (msg) msg.textContent = 'No hay carreras disponibles en este momento.';
+    }
+  }
+
+  redirectToLatestEvent();
+</script>
