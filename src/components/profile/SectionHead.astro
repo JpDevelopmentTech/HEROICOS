@@ -1,0 +1,30 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+}
+
+const { eyebrow, title } = Astro.props;
+const hasAside = Astro.slots.has('aside');
+---
+
+<div
+  class:list={[
+    'flex w-full flex-col gap-3 md:gap-4',
+    hasAside && 'md:flex-row md:items-end md:justify-between md:gap-8',
+  ]}
+>
+  <div class="flex flex-col gap-3 md:gap-4">
+    <div class="flex items-center gap-2.5 md:gap-3">
+      <span class="block h-0.5 w-6 bg-accent md:w-7"></span>
+      <span class="font-body text-[10px] font-bold tracking-[2px] text-accent md:text-[11px] md:tracking-[3px]">
+        {eyebrow}
+      </span>
+    </div>
+    <h2 class="font-heading text-[30px] font-bold leading-[1.1] tracking-[-0.8px] text-white md:text-[44px] md:leading-[1.05] md:tracking-[-1px]">
+      {title}
+    </h2>
+  </div>
+
+  {hasAside && <div class="mt-1 md:mt-0"><slot name="aside" /></div>}
+</div>

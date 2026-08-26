@@ -1,0 +1,89 @@
+---
+import Icon from './Icon.astro';
+import SectionHead from './SectionHead.astro';
+
+const records = [
+  { distance: '5K', time: '21:34', pace: '4:19 /km', race: 'Nocturna Getsemaní', date: 'Nov 2026', delta: '-0:42', fresh: true },
+  { distance: '10K', time: '45:12', pace: '4:31 /km', race: 'Carrera de la Luz', date: 'Sep 2026', delta: '-1:08', fresh: false },
+  { distance: '21K', time: '1:38:05', pace: '4:39 /km', race: 'Media Maratón Cartagena', date: 'Ago 2026', delta: '-3:24', fresh: false },
+  { distance: '42K', time: '3:41:22', pace: '5:15 /km', race: 'Maratón de Bogotá', date: 'Jul 2026', delta: 'Debut', fresh: false },
+];
+---
+
+<section class="bg-dark-950 px-5 py-11 md:px-20 md:py-24">
+  <div class="flex flex-col gap-6 md:gap-11">
+    <SectionHead eyebrow="RÉCORDS PERSONALES" title="Tus mejores marcas.">
+      <a
+        slot="aside"
+        href="#historial"
+        class="hidden items-center gap-2 rounded border border-dark-700 px-5 py-3 font-body text-xs font-bold tracking-[1.5px] text-gray-200 transition-colors hover:border-gray-600 md:inline-flex"
+      >
+        VER TODOS LOS TIEMPOS
+        <Icon name="arrow-right" size={15} class="text-accent" />
+      </a>
+    </SectionHead>
+
+    <div class="grid grid-cols-2 gap-2.5 lg:grid-cols-4 md:gap-5">
+      {
+        records.map((r) => (
+          <article
+            class:list={[
+              'flex flex-col rounded-lg border p-[18px] md:p-[26px]',
+              r.fresh ? 'border-accent bg-accent/[0.06]' : 'border-dark-750 bg-dark-900',
+            ]}
+          >
+            <header class="flex items-center justify-between">
+              <span
+                class:list={[
+                  'font-display text-[17px] font-bold tracking-[2px] md:text-[22px] md:tracking-[3px]',
+                  r.fresh ? 'text-accent' : 'text-gray-300',
+                ]}
+              >
+                {r.distance}
+              </span>
+              <span
+                class:list={[
+                  'flex items-center gap-1 rounded-sm px-[7px] py-1 md:gap-1.5 md:px-[9px] md:py-[5px]',
+                  r.fresh ? 'bg-accent text-dark-950' : 'bg-dark-750 text-gray-400',
+                ]}
+              >
+                <Icon name={r.fresh ? 'zap' : 'trophy'} size={9} class="md:h-[11px] md:w-[11px]" />
+                <span class="font-body text-[8px] font-bold tracking-[1px] md:text-[9px] md:tracking-[1.2px]">
+                  <span class="md:hidden">{r.fresh ? 'NUEVO' : 'PR'}</span>
+                  <span class="hidden md:inline">{r.fresh ? 'NUEVO PR' : 'PR'}</span>
+                </span>
+              </span>
+            </header>
+
+            <p class="mt-2.5 font-display text-[38px] font-bold leading-none tracking-[-0.5px] text-white md:mt-5 md:text-[44px] xl:text-[60px] md:tracking-[-1px]">
+              {r.time}
+            </p>
+
+            <p class="mt-2.5 font-body text-[11px] text-gray-400 md:mt-2 md:text-[13px]">
+              <span class="hidden md:inline">Ritmo promedio </span>{r.pace}
+            </p>
+
+            <hr class:list={['mt-2.5 md:mt-[22px]', r.fresh ? 'border-accent/20' : 'border-dark-750']} />
+
+            <p class="mt-2.5 font-body text-[11px] font-semibold leading-snug text-gray-200 md:mt-4 md:text-[13px]">
+              {r.race}
+            </p>
+
+            <div class="mt-2 flex items-center justify-between md:mt-2">
+              <span class="hidden font-body text-xs text-gray-500 md:inline">{r.date}</span>
+              <span
+                class:list={[
+                  'flex items-center gap-0.5 font-display text-sm font-semibold md:gap-1 md:text-[17px]',
+                  r.delta === 'Debut' ? 'text-gray-500' : 'text-[#22C55E]',
+                ]}
+              >
+                {r.delta !== 'Debut' && <Icon name="chevron-down" size={11} class="md:h-[13px] md:w-[13px]" />}
+                {r.delta}
+              </span>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

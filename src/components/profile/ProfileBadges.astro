@@ -1,0 +1,80 @@
+---
+import Icon from './Icon.astro';
+import SectionHead from './SectionHead.astro';
+
+const badges = [
+  { icon: 'zap', name: 'Primer 5K', detail: 'Ene 2021', unlocked: true, tone: 'text-accent border-accent' },
+  { icon: 'medal', name: 'Primer podio', detail: '3º general · Nocturna 2024', detailShort: '3º general', unlocked: true, tone: 'text-gold border-gold' },
+  { icon: 'flame', name: 'Racha de fuego', detail: '14 semanas seguidas', detailShort: '14 semanas', unlocked: true, tone: 'text-[#F5A524] border-[#F5A524]' },
+  { icon: 'sunrise', name: 'Madrugador', detail: '50 entrenos antes de las 6 a.m.', detailShort: '50 entrenos 6 a.m.', unlocked: true, tone: 'text-accent border-accent' },
+  { icon: 'timer', name: 'Maratón sub 3:30', detail: 'Te faltan 11:22', unlocked: false, tone: '' },
+  { icon: 'hash', name: '100 carreras', detail: '76 restantes', unlocked: false, tone: '' },
+  { icon: 'mountain', name: 'Rompe cuestas', detail: '+1.000 m de desnivel', unlocked: true, tone: 'text-accent border-accent', desktopOnly: true },
+  { icon: 'moon', name: 'Corredor nocturno', detail: '10 carreras de noche', unlocked: true, tone: 'text-accent border-accent', desktopOnly: true },
+  { icon: 'heart', name: 'Mentor', detail: '5 corredores guiados', unlocked: true, tone: 'text-accent border-accent', desktopOnly: true },
+  { icon: 'target', name: 'Sub 45 en 10K', detail: 'Sep 2026', unlocked: true, tone: 'text-accent border-accent', desktopOnly: true },
+];
+
+const unlocked = 18;
+const total = 32;
+---
+
+<section class="bg-dark-950 px-5 py-11 md:px-20 md:py-24">
+  <div class="flex flex-col gap-6 md:gap-11">
+    <SectionHead eyebrow="MEDALLERO" title="Lo que ya conquistaste.">
+      <div slot="aside" class="flex flex-col gap-2 md:items-end md:gap-2.5">
+        <div class="order-2 h-1.5 w-full overflow-hidden rounded-full bg-dark-750 md:order-2 md:w-60">
+          <div class="h-full rounded-full bg-accent" style={`width: ${(unlocked / total) * 100}%`}></div>
+        </div>
+        <span class="order-1 font-body text-xs font-semibold text-gray-400 md:order-1 md:text-[13px] md:text-gray-300">
+          {unlocked} de {total} insignias desbloqueadas
+        </span>
+      </div>
+    </SectionHead>
+
+    <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5 md:gap-5">
+      {
+        badges.map((b) => (
+          <article
+            class:list={[
+              'flex flex-col items-center gap-3 rounded-lg border px-3.5 py-5 text-center md:gap-4 md:px-5 md:py-7',
+              b.unlocked ? 'border-dark-750 bg-dark-900' : 'border-dark-800 bg-dark-900/50 md:order-last',
+              b.desktopOnly && 'hidden md:flex',
+            ]}
+          >
+            <span
+              class:list={[
+                'flex h-[54px] w-[54px] items-center justify-center rounded-full border md:h-[66px] md:w-[66px]',
+                b.unlocked ? `bg-white/[0.04] ${b.tone}` : 'border-dark-750 bg-white/[0.02] text-gray-600',
+              ]}
+            >
+              <Icon name={b.unlocked ? b.icon : 'lock'} size={22} class="md:h-[26px] md:w-[26px]" />
+            </span>
+            <div class="flex flex-col gap-1">
+              <span
+                class:list={[
+                  'font-heading text-[13px] font-semibold leading-snug md:text-sm',
+                  b.unlocked ? 'text-white' : 'text-gray-500',
+                ]}
+              >
+                {b.name}
+              </span>
+              <span class:list={['font-body text-[10px] leading-relaxed md:text-[11px]', b.unlocked ? 'text-gray-500' : 'text-gray-600']}>
+                <span class="md:hidden">{b.detailShort ?? b.detail}</span>
+                <span class="hidden md:inline">{b.detail}</span>
+              </span>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <button
+      type="button"
+      class="flex cursor-pointer items-center justify-center gap-2 rounded border border-dark-750 bg-white/[0.03] py-3.5 font-body text-[11px] font-bold tracking-[1.2px] text-gray-200 transition-colors hover:border-gray-600 md:hidden"
+    >
+      VER LAS {total} INSIGNIAS
+      <Icon name="arrow-right" size={14} class="text-accent" />
+    </button>
+  </div>
+</section>

@@ -1,0 +1,147 @@
+---
+import Icon from './Icon.astro';
+import SectionHead from './SectionHead.astro';
+
+const filters = ['TODAS', '5K', '10K', '21K', '42K', 'TRAIL'];
+
+const races = [
+  { name: 'Nocturna Getsemaní', place: 'Cartagena, Bolívar', date: '15 Nov 2026', distance: '5K', time: '21:34', pace: '4:19 /km', position: '3º de 412', result: 'BRONCE', tone: 'text-bronze', icon: 'award' },
+  { name: 'Maratón de Cartagena', place: 'Cartagena, Bolívar', date: '12 Oct 2026', distance: '42K', time: '3:41:22', pace: '5:15 /km', position: '84º de 1.240', result: 'FINISHER', tone: 'text-gray-400', icon: 'flag' },
+  { name: 'Carrera de la Luz', place: 'Turbaco, Bolívar', date: '09 Sep 2026', distance: '10K', time: '45:12', pace: '4:31 /km', position: '1º de 268', result: 'ORO', tone: 'text-gold', icon: 'award' },
+  { name: 'Media Maratón Cartagena', place: 'Cartagena, Bolívar', date: '24 Ago 2026', distance: '21K', time: '1:38:05', pace: '4:39 /km', position: '41º de 980', result: 'FINISHER', tone: 'text-gray-400', icon: 'flag' },
+  { name: 'Trail Cerro de la Popa', place: 'Cartagena, Bolívar', date: '18 Jul 2026', distance: '12K', time: '1:04:50', pace: '5:24 /km', position: '2º de 156', result: 'PLATA', tone: 'text-silver', icon: 'award', desktopOnly: true },
+  { name: 'Ruta Heroica Barú', place: 'Barú, Bolívar', date: '03 Jun 2026', distance: '21K', time: '1:42:37', pace: '4:52 /km', position: '15º de 540', result: 'FINISHER', tone: 'text-gray-400', icon: 'flag', desktopOnly: true },
+];
+---
+
+<section id="historial" class="border-y border-dark-800 bg-dark-900 px-5 py-11 md:px-20 md:py-24">
+  <div class="flex flex-col gap-5 md:gap-10">
+    <SectionHead eyebrow="HISTORIAL" title="24 líneas de meta.">
+      <div slot="aside" class="hidden flex-wrap items-center gap-2 md:flex">
+        {
+          filters.map((f, i) => (
+            <span
+              class:list={[
+                'cursor-pointer rounded-full px-4 py-[9px] font-body text-[11px] font-bold tracking-[1.2px]',
+                i === 0 ? 'bg-accent text-dark-950' : 'border border-dark-750 bg-dark-950 text-gray-400',
+              ]}
+            >
+              {f}
+            </span>
+          ))
+        }
+      </div>
+    </SectionHead>
+
+    <!-- Filtros móviles -->
+    <div class="-mx-5 flex gap-1.5 overflow-x-auto px-5 pb-1 md:hidden">
+      {
+        filters.slice(0, 5).map((f, i) => (
+          <span
+            class:list={[
+              'shrink-0 cursor-pointer rounded-full px-[13px] py-2 font-body text-[10px] font-bold tracking-[1px]',
+              i === 0 ? 'bg-accent text-dark-950' : 'border border-dark-750 bg-dark-950 text-gray-400',
+            ]}
+          >
+            {f}
+          </span>
+        ))
+      }
+    </div>
+
+    <!-- Tabla (desktop) -->
+    <div class="hidden overflow-x-auto rounded-lg border border-dark-750 bg-dark-950 md:block">
+      <div class="min-w-[1150px]">
+      <div class="flex items-center gap-0 bg-white/[0.02] px-6 py-4">
+        <span class="w-[372px] font-body text-[10px] font-bold tracking-[1.8px] text-gray-500">CARRERA</span>
+        <span class="w-[128px] font-body text-[10px] font-bold tracking-[1.8px] text-gray-500">FECHA</span>
+        <span class="w-[110px] font-body text-[10px] font-bold tracking-[1.8px] text-gray-500">DISTANCIA</span>
+        <span class="w-[128px] font-body text-[10px] font-bold tracking-[1.8px] text-gray-500">TIEMPO</span>
+        <span class="w-[108px] font-body text-[10px] font-bold tracking-[1.8px] text-gray-500">RITMO</span>
+        <span class="w-[148px] font-body text-[10px] font-bold tracking-[1.8px] text-gray-500">POSICIÓN</span>
+        <span class="flex-1 font-body text-[10px] font-bold tracking-[1.8px] text-gray-500">RESULTADO</span>
+      </div>
+
+      {
+        races.map((r) => (
+          <div class="flex items-center border-t border-dark-800 px-6 py-5 transition-colors hover:bg-white/[0.02]">
+            <div class="flex w-[372px] flex-col gap-1 pr-4">
+              <span class="font-heading text-[15px] font-semibold text-white">{r.name}</span>
+              <span class="font-body text-xs text-gray-500">{r.place}</span>
+            </div>
+            <span class="w-[128px] font-body text-[13px] text-gray-300">{r.date}</span>
+            <div class="w-[110px]">
+              <span class="rounded-sm bg-dark-800 px-2.5 py-[5px] font-display text-sm font-semibold tracking-[1px] text-gray-200">
+                {r.distance}
+              </span>
+            </div>
+            <span class="w-[128px] font-display text-2xl font-semibold text-white">{r.time}</span>
+            <span class="w-[108px] font-body text-[13px] text-gray-400">{r.pace}</span>
+            <span class="w-[148px] font-body text-[13px] font-semibold text-gray-200">{r.position}</span>
+            <div class="flex flex-1 items-center justify-between">
+              <span class="flex items-center gap-1.5 rounded-sm border border-dark-750 bg-white/[0.03] px-[11px] py-1.5">
+                <Icon name={r.icon} size={13} class={r.tone} />
+                <span class={`font-body text-[10px] font-bold tracking-[1.2px] ${r.tone}`}>{r.result}</span>
+              </span>
+              <span class="flex cursor-pointer items-center gap-1.5 font-body text-xs font-semibold text-accent">
+                Ver carrera
+                <Icon name="arrow-up-right" size={14} />
+              </span>
+            </div>
+          </div>
+        ))
+      }
+
+      <div class="flex cursor-pointer items-center justify-center gap-2 border-t border-dark-800 bg-white/[0.01] py-[18px] transition-colors hover:bg-white/[0.03]">
+        <span class="font-body text-xs font-bold tracking-[1.5px] text-gray-200">VER LAS 24 CARRERAS</span>
+        <Icon name="chevron-down" size={15} class="text-accent" />
+      </div>
+      </div>
+    </div>
+
+    <!-- Tarjetas (móvil) -->
+    <div class="flex flex-col gap-2.5 md:hidden">
+      {
+        races
+          .filter((r) => !r.desktopOnly)
+          .map((r) => (
+            <article class="flex flex-col gap-3 rounded-lg border border-dark-750 bg-dark-950 p-4">
+              <header class="flex items-start justify-between gap-2.5">
+                <div class="flex flex-col gap-1">
+                  <span class="font-heading text-sm font-semibold leading-snug text-white">{r.name}</span>
+                  <span class="font-body text-[11px] text-gray-500">{r.date} · {r.place.split(',')[0]}</span>
+                </div>
+                <span class="shrink-0 rounded-sm bg-dark-800 px-[9px] py-[5px] font-display text-[13px] font-semibold tracking-[1px] text-gray-200">
+                  {r.distance}
+                </span>
+              </header>
+
+              <hr class="border-dark-800" />
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-end gap-2.5">
+                  <span class="font-display text-[28px] font-bold leading-none text-white">{r.time}</span>
+                  <span class="font-body text-[11px] text-gray-500">{r.pace}</span>
+                </div>
+                <div class="flex flex-col items-end gap-1.5">
+                  <span class="font-body text-xs font-semibold text-gray-200">{r.position}</span>
+                  <span class="flex items-center gap-1.5 rounded-sm border border-dark-750 bg-white/[0.03] px-2 py-1">
+                    <Icon name={r.icon} size={11} class={r.tone} />
+                    <span class={`font-body text-[9px] font-bold tracking-[1px] ${r.tone}`}>{r.result}</span>
+                  </span>
+                </div>
+              </div>
+            </article>
+          ))
+      }
+
+      <button
+        type="button"
+        class="flex cursor-pointer items-center justify-center gap-2 rounded border border-dark-750 bg-white/[0.03] py-3.5 font-body text-[11px] font-bold tracking-[1.2px] text-gray-200"
+      >
+        VER LAS 24 CARRERAS
+        <Icon name="chevron-down" size={14} class="text-accent" />
+      </button>
+    </div>
+  </div>
+</section>

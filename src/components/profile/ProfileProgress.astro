@@ -1,0 +1,172 @@
+---
+import Icon from './Icon.astro';
+import SectionHead from './SectionHead.astro';
+
+const months = [
+  { m: 'ENE', km: 62 }, { m: 'FEB', km: 74 }, { m: 'MAR', km: 58 },
+  { m: 'ABR', km: 91 }, { m: 'MAY', km: 86 }, { m: 'JUN', km: 103 },
+  { m: 'JUL', km: 97 }, { m: 'AGO', km: 112 }, { m: 'SEP', km: 88 },
+  { m: 'OCT', km: 124 }, { m: 'NOV', km: 131 }, { m: 'DIC', km: 118 },
+];
+const best = Math.max(...months.map((x) => x.km));
+
+const level = { current: 7, rank: 'Maratonista', xp: 7840, target: 10000 };
+const xpPct = Math.round((level.xp / level.target) * 100);
+
+const rewards = [
+  { icon: 'ticket', text: 'Dorsal dorado en tu próxima carrera', at: 'NIVEL 8', atShort: 'N8' },
+  { icon: 'users', text: 'Acceso a entrenamientos élite', at: 'NIVEL 9', atShort: 'N9' },
+  { icon: 'shirt', text: 'Camiseta Heroica edición limitada', at: 'NIVEL 10', atShort: 'N10' },
+];
+
+const years = ['2026', '2025', 'TODO'];
+---
+
+<section class="border-y border-dark-800 bg-dark-900 px-5 py-11 md:px-20 md:py-24">
+  <div class="flex flex-col gap-6 md:gap-11">
+    <SectionHead eyebrow="TU EVOLUCIÓN" title="Cada mes, más lejos.">
+      <div slot="aside" class="hidden rounded-md border border-dark-750 bg-dark-950 p-1 md:flex">
+        {
+          years.map((y, i) => (
+            <span
+              class:list={[
+                'cursor-pointer rounded px-[18px] py-[9px] font-body text-xs font-bold tracking-[1.2px]',
+                i === 0 ? 'bg-dark-750 text-white' : 'text-gray-500',
+              ]}
+            >
+              {y}
+            </span>
+          ))
+        }
+      </div>
+    </SectionHead>
+
+    <div class="flex flex-col items-stretch gap-5 xl:flex-row xl:items-start md:gap-6">
+      <!-- Progresión heroica -->
+      <div
+        class="order-1 flex flex-col gap-[18px] rounded-lg border border-dark-750 bg-dark-950 p-5 xl:order-2 xl:w-[400px] xl:shrink-0 md:gap-[22px] md:p-[30px]"
+      >
+        <div class="flex flex-col gap-2.5 md:gap-3.5">
+          <div class="flex items-center gap-[7px] md:gap-2">
+            <Icon name="shield-check" size={13} class="text-accent md:h-3.5 md:w-3.5" />
+            <span class="font-body text-[9px] font-bold tracking-[2px] text-accent md:text-[10px]">
+              PROGRESIÓN HEROICA
+            </span>
+          </div>
+          <div class="flex items-end gap-2.5 md:gap-3">
+            <span class="font-display text-4xl font-bold leading-none text-white md:text-[44px]">
+              NIVEL {level.current}
+            </span>
+            <span class="font-heading text-sm font-semibold text-gray-300 md:text-base">{level.rank}</span>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2.5">
+          <div class="h-[9px] w-full overflow-hidden rounded-full bg-dark-750 md:h-2.5">
+            <div class="h-full rounded-full bg-accent" style={`width: ${xpPct}%`}></div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="font-body text-xs font-semibold text-white md:text-[13px]">
+              {level.xp.toLocaleString('es-CO')} XP
+            </span>
+            <span class="font-body text-[11px] text-gray-500 md:text-xs">
+              faltan {(level.target - level.xp).toLocaleString('es-CO')}
+              <span class="hidden md:inline"> para Nivel {level.current + 1}</span>
+            </span>
+          </div>
+        </div>
+
+        <hr class="border-dark-750" />
+
+        <div class="flex flex-col gap-2.5 md:gap-3.5">
+          <span class="font-body text-[9px] font-bold tracking-[2px] text-gray-500 md:text-[10px]">
+            PRÓXIMAS RECOMPENSAS
+          </span>
+          {
+            rewards.map((r) => (
+              <div class="flex items-center gap-2.5 rounded-md border border-dark-800 bg-white/[0.03] px-3 py-[11px] md:gap-3 md:px-3.5 md:py-3">
+                <Icon name={r.icon} size={15} class="shrink-0 text-gray-400 md:h-4 md:w-4" />
+                <span class="flex-1 font-body text-[11px] font-medium leading-snug text-gray-200 md:text-xs">
+                  {r.text}
+                </span>
+                <span class="font-display text-[13px] font-semibold tracking-[1px] text-gray-600 md:text-sm">
+                  <span class="md:hidden">{r.atShort}</span>
+                  <span class="hidden md:inline">{r.at}</span>
+                </span>
+              </div>
+            ))
+          }
+        </div>
+
+        <button
+          type="button"
+          class="flex cursor-pointer items-center justify-center gap-2 rounded bg-accent py-3.5 font-body text-[11px] font-bold tracking-[1.2px] text-dark-950 transition-opacity hover:opacity-90 md:text-xs md:tracking-[1.5px]"
+        >
+          VER MI PLAN DE ENTRENAMIENTO
+          <Icon name="arrow-right" size={14} />
+        </button>
+      </div>
+
+      <!-- Volumen mensual -->
+      <div
+        class="order-2 flex min-w-0 flex-1 flex-col gap-5 rounded-lg border border-dark-750 bg-dark-950 p-5 xl:order-1 md:gap-7 md:p-[30px]"
+      >
+        <header class="flex items-start justify-between gap-4">
+          <div class="flex flex-col gap-[5px] md:gap-1.5">
+            <span class="font-body text-[9px] font-bold tracking-[1.8px] text-gray-500 md:text-[10px] md:tracking-[2px]">
+              <span class="md:hidden">ÚLTIMOS 6 MESES · KM</span>
+              <span class="hidden md:inline">VOLUMEN MENSUAL · KILÓMETROS</span>
+            </span>
+            <span class="font-display text-2xl font-bold text-white md:text-[30px]">1.144 km en 2026</span>
+          </div>
+          <div class="flex flex-col items-end gap-[5px] md:gap-1.5">
+            <span class="font-body text-[9px] font-bold tracking-[1.8px] text-gray-500 md:text-[10px] md:tracking-[2px]">
+              MEJOR MES
+            </span>
+            <span class="font-display text-2xl font-bold text-accent md:text-[30px]">
+              <span class="md:hidden">131 · NOV</span>
+              <span class="hidden md:inline">131 km · NOV</span>
+            </span>
+          </div>
+        </header>
+
+        <div class="flex items-end gap-2 md:gap-2.5">
+          {
+            months.map((x, i) => {
+              const h = Math.round((x.km / best) * 276);
+              const hm = Math.round((x.km / best) * 130);
+              const isBest = x.km === best;
+              return (
+                <div
+                  class:list={[
+                    'flex-1 flex-col items-center gap-2 md:flex md:gap-2.5',
+                    i < 6 ? 'hidden' : 'flex',
+                  ]}
+                >
+                  <span
+                    class:list={[
+                      'font-display text-[13px] font-semibold md:text-sm',
+                      isBest ? 'text-accent' : 'text-gray-500',
+                    ]}
+                  >
+                    {x.km}
+                  </span>
+                  <div
+                    class:list={[
+                      'w-full rounded-t-[3px] h-[var(--hm)] md:h-[var(--h)]',
+                      isBest ? 'bg-accent' : x.km >= 112 ? 'bg-accent/35' : 'bg-dark-750',
+                    ]}
+                    style={`--h:${h}px;--hm:${hm}px`}
+                  />
+                  <span class="font-body text-[9px] font-semibold tracking-[1px] text-gray-600 md:text-[10px]">
+                    {x.m}
+                  </span>
+                </div>
+              );
+            })
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

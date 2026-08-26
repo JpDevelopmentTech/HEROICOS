@@ -1,0 +1,44 @@
+---
+import Icon from './Icon.astro';
+
+const stats = [
+  { icon: 'activity', label: 'CARRERAS', labelLg: 'CARRERAS COMPLETADAS', value: '24', sub: '+3 esta temporada', tone: 'text-accent' },
+  { icon: 'route', label: 'KILÓMETROS', labelLg: 'KILÓMETROS RECORRIDOS', value: '1.284', sub: '+186 este año', tone: 'text-accent' },
+  { icon: 'medal', label: 'PODIOS', labelLg: 'PODIOS', value: '6', sub: '2 oros · 3 platas', tone: 'text-gold' },
+  { icon: 'flame', label: 'RACHA', labelLg: 'RACHA ACTIVA', value: '14', sub: 'semanas seguidas', tone: 'text-[#F5A524]' },
+  { icon: 'trending-up', label: 'CATEGORÍA', labelLg: 'RANKING CATEGORÍA', value: 'Top 8%', valueLg: '8%', sub: 'de 30-34 M', tone: 'text-[#22C55E]' },
+  { icon: 'shield-check', label: 'NIVEL', labelLg: 'NIVEL', value: '7', sub: '78% a Nivel 8', tone: 'text-accent', desktopHidden: true },
+];
+---
+
+<section class="border-y border-dark-800 bg-dark-900 px-5 py-7 md:px-20 md:py-[34px]">
+  <!-- Rejilla en móvil, franja con divisores en desktop -->
+  <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 xl:flex xl:items-center xl:justify-between xl:gap-0">
+    {
+      stats.map((stat, i) => (
+        <>
+          {i > 0 && <span class="hidden h-[62px] w-px bg-dark-700 xl:block" />}
+          <div
+            class:list={[
+              'flex flex-col gap-1.5 rounded-md border border-dark-750 bg-dark-950 p-4 xl:gap-[7px] xl:rounded-none xl:border-0 xl:bg-transparent xl:p-0',
+              stat.desktopHidden && 'xl:hidden',
+            ]}
+          >
+            <div class="flex items-center gap-1.5 md:gap-[7px]">
+              <Icon name={stat.icon} size={12} class={`${stat.tone} md:h-[13px] md:w-[13px]`} />
+              <span class="font-body text-[9px] font-bold tracking-[1.5px] text-gray-500 md:text-[10px] md:tracking-[1.8px]">
+                <span class="xl:hidden">{stat.label}</span>
+                <span class="hidden xl:inline">{stat.labelLg}</span>
+              </span>
+            </div>
+            <p class="font-display text-[34px] font-bold leading-none text-white md:text-[46px] md:tracking-[-1px]">
+              <span class="xl:hidden">{stat.value}</span>
+              <span class="hidden xl:inline">{stat.valueLg ?? stat.value}</span>
+            </p>
+            <p class={`font-body text-[11px] font-medium md:text-xs ${stat.tone}`}>{stat.sub}</p>
+          </div>
+        </>
+      ))
+    }
+  </div>
+</section>

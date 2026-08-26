@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AuthRegisterModal from '../components/AuthRegisterModal.astro';
+import AuthLoginModal from '../components/AuthLoginModal.astro';
+import ProfileHero from '../components/profile/ProfileHero.astro';
+import ProfileStatsBar from '../components/profile/ProfileStatsBar.astro';
+import ProfileRecords from '../components/profile/ProfileRecords.astro';
+import ProfileProgress from '../components/profile/ProfileProgress.astro';
+import ProfileBadges from '../components/profile/ProfileBadges.astro';
+import ProfileHistory from '../components/profile/ProfileHistory.astro';
+import ProfileNextRace from '../components/profile/ProfileNextRace.astro';
+import ProfileMobileNav from '../components/profile/ProfileMobileNav.astro';
+---
+
+<Layout
+  title="Perfil del corredor — HEROICOS Run Club"
+  description="Tu pasaporte heroico: récords personales, medallero, historial de carreras y progresión dentro de HEROICOS Run Club."
+  noindex={true}
+>
+  <Header />
+
+  <!-- El nav inferior fijo en movil reserva su espacio al final de la pagina -->
+  <div class="pb-[82px] md:pb-0">
+    <main>
+      <ProfileHero />
+      <ProfileStatsBar />
+      <ProfileRecords />
+      <ProfileProgress />
+      <ProfileBadges />
+      <ProfileHistory />
+      <ProfileNextRace />
+    </main>
+
+    <Footer />
+  </div>
+
+  <ProfileMobileNav />
+
+  <AuthRegisterModal />
+  <AuthLoginModal />
+</Layout>
