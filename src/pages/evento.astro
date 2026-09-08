@@ -369,7 +369,7 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
 
     if (coords.length > 0) {
       const polyline = L.polyline(coords, {
-        color: '#00F0FF',
+        color: '#FFFFFF',
         weight: 4,
         opacity: 0.9,
         lineJoin: 'round',
@@ -379,7 +379,7 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
       // Start pin
       const startIcon = L.divIcon({
         className: '',
-        html: `<div style="display:flex;align-items:center;gap:6px;background:#00F0FFE6;border-radius:20px;padding:6px 14px;">
+        html: `<div style="display:flex;align-items:center;gap:6px;background:#FFFFFFE6;border-radius:20px;padding:6px 14px;">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
           <span style="font-family:Inter,sans-serif;font-size:11px;font-weight:700;color:#0A0A0A;">Salida</span>
         </div>`,
@@ -391,7 +391,7 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
       // End pin
       const endIcon = L.divIcon({
         className: '',
-        html: `<div style="display:flex;align-items:center;gap:6px;background:#00F0FFE6;border-radius:20px;padding:6px 14px;">
+        html: `<div style="display:flex;align-items:center;gap:6px;background:#FFFFFFE6;border-radius:20px;padding:6px 14px;">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V2l10 5-10 5"/></svg>
           <span style="font-family:Inter,sans-serif;font-size:11px;font-weight:700;color:#0A0A0A;">Meta</span>
         </div>`,
@@ -494,7 +494,7 @@ import AuthLoginModal from '../components/AuthLoginModal.astro';
         const dist = Math.abs(i - mid) / mid;
         const height = 20 + (1 - dist) * 65 + Math.random() * 10;
         const opacity = 0.3 + (1 - dist) * 0.7;
-        return `<div class="flex-1 rounded-sm" style="height:${Math.round(height)}px;background:rgba(0,240,255,${opacity.toFixed(2)})"></div>`;
+        return `<div class="flex-1 rounded-sm" style="height:${Math.round(height)}px;background:rgba(255,255,255,${opacity.toFixed(2)})"></div>`;
       });
       chartEl.innerHTML = bars.join('');
     }

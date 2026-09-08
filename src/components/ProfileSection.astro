@@ -151,7 +151,7 @@ import SectionLabel from './ui/SectionLabel.astro';
       const isLast = i === months.length - 1;
       const isPrev = i === months.length - 2;
       const height = m.km > 0 ? Math.max(8, Math.round((m.km / maxKm) * 100)) : 4;
-      const bgColor = isLast ? 'bg-accent' : isPrev ? 'bg-[#1A3A3A]' : 'bg-dark-750';
+      const bgColor = isLast ? 'bg-accent' : isPrev ? 'bg-gray-500' : 'bg-dark-750';
       const labelColor = isLast ? 'text-accent' : 'text-gray-600';
       const kmLabel = m.km > 0 ? `<span class="font-body text-[10px] font-bold ${labelColor}">${Math.round(m.km)}</span>` : '';
       return `
