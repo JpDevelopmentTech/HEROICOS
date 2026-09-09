@@ -31,3 +31,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Reveal-on-scroll (motion). Elements start hidden only when JS is available
+   and the user has not asked for reduced motion; reveal.ts animates them in. */
+@media (prefers-reduced-motion: no-preference) {
+  html.reveal-js [data-reveal] {
+    opacity: 0;
+  }
+}
+
+/* Leaflet uses z-index up to 1000 on its controls/panes, which lets them paint
+   over the sticky header on scroll. Isolating the map traps that stack inside. */
+.leaflet-container {
+  isolation: isolate;
+}

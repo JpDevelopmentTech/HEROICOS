@@ -87,8 +87,23 @@ const imageURL = new URL(image, Astro.site || 'https://heroicosrunclub.com').hre
     )}
 
     <meta name="generator" content={Astro.generator} />
+
+    <!-- Reveal-on-scroll: hide targets before hydration to avoid a flash.
+         If JS is disabled or reduced-motion is on, nothing is hidden. -->
+    <script is:inline>
+      document.documentElement.classList.add('reveal-js');
+    </script>
   </head>
   <body>
     <slot />
+
+    <script>
+      import { initReveal } from '../scripts/reveal';
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => initReveal());
+      } else {
+        initReveal();
+      }
+    </script>
   </body>
 </html>
