@@ -1,0 +1,197 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SectionLabel from '../components/ui/SectionLabel.astro';
+import AuthRegisterModal from '../components/AuthRegisterModal.astro';
+import AuthLoginModal from '../components/AuthLoginModal.astro';
+
+const benefits = [
+  {
+    title: '20% de descuento en hospedaje',
+    desc: 'En AmaLife, para todos los miembros de la comunidad HEROICOS.',
+  },
+  {
+    title: '10% de descuento en consumo',
+    desc: 'Durante tu visita a AmaLife.',
+  },
+];
+---
+
+<Layout
+  title="HEROICOS × AmaLife — Alianza"
+  description="La alianza entre HEROICOS Run Club y AmaLife: beneficios exclusivos en hospedaje, consumo y pasadía para los miembros de la comunidad."
+>
+  <Header />
+
+  <!-- Breadcrumb -->
+  <div class="flex items-center gap-2 bg-dark-950 px-5 py-3 md:px-20 md:py-4">
+    <a href="/" class="flex items-center gap-2 text-accent transition-opacity hover:opacity-80">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      <span class="font-body text-[13px] font-medium">Volver al inicio</span>
+    </a>
+    <span class="text-[13px] text-gray-600">/</span>
+    <span class="font-body text-[13px] font-medium text-gray-400">Alianza</span>
+  </div>
+
+  <main>
+    <section class="flex flex-col gap-8 bg-dark-950/55 px-5 py-14 backdrop-blur-2xl md:gap-10 md:px-[120px] md:py-20">
+      <div class="mx-auto flex w-full max-w-3xl flex-col gap-8 md:gap-10">
+        <!-- Encabezado -->
+        <div class="flex flex-col items-center gap-5 text-center md:gap-6">
+          <SectionLabel text="ALIANZA" />
+          <h1 class="flex flex-wrap items-center justify-center gap-3 font-heading text-[32px] font-extrabold tracking-[-1.5px] md:gap-4 md:text-[56px]">
+            <span class="text-white">HEROICOS</span>
+            <span class="font-light text-gray-500">×</span>
+            <span class="bg-gradient-to-r from-emerald-500 to-orange-400 bg-clip-text text-transparent">AmaLife</span>
+          </h1>
+        </div>
+
+        <!-- Contenido -->
+        <div class="flex flex-col gap-6 font-body text-sm leading-relaxed text-gray-300 md:text-base">
+          <p>
+            Nos encanta poder hacer parte de los aliados estratégicos de HEROICOS y
+            ofrecer beneficios especiales para todos los miembros de su comunidad de
+            runners.
+          </p>
+
+          <p>
+            A través de la tarjeta de membresía HEROICOS, sus usuarios podrán acceder a:
+          </p>
+
+          <ul class="flex flex-col gap-3">
+            {benefits.map((b) => (
+              <li class="flex items-start gap-3 rounded-xl border border-dark-700 bg-dark-900/50 p-4 md:p-5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-emerald-400">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+                <span>
+                  <strong class="font-semibold text-white">{b.title}</strong>
+                  <span class="text-gray-400"> — {b.desc}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <!-- Pasadía -->
+          <div class="rounded-xl border border-dark-700 bg-dark-900/50 p-5 md:p-6">
+            <span class="font-body text-[11px] font-bold tracking-[2px] text-accent">
+              PASADÍA ESPECIAL HEROICOS
+            </span>
+            <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-10">
+              <div class="flex flex-col gap-1">
+                <span class="font-body text-xs text-gray-500">Precio público</span>
+                <span class="font-heading text-lg font-semibold text-gray-400 line-through">$150.000</span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="font-body text-xs text-gray-400">Precio exclusivo para miembros HEROICOS</span>
+                <span class="font-heading text-3xl font-extrabold tracking-[-1px] text-white">$120.000</span>
+              </div>
+            </div>
+          </div>
+
+          <p>
+            Además, queremos que esta alianza sea beneficiosa para HEROICOS también:
+            por cada pasadía vendido a $120.000, HEROICOS recibirá
+            <strong class="font-semibold text-white">$20.000 de comisión</strong>.
+          </p>
+
+          <p>
+            Así construimos una alianza donde gana la comunidad, gana HEROICOS y gana
+            AmaLife.
+          </p>
+
+          <p class="font-heading text-base font-semibold text-white md:text-lg">
+            Felices de tenerlos como aliados.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <AuthRegisterModal />
+  <AuthLoginModal />
+</Layout>
+
+<script>
+  function setupModals() {
+    document.querySelectorAll<HTMLElement>('[data-open-modal]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const modalId = btn.dataset.openModal!;
+        document.getElementById(modalId)?.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-close-modal]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const modalId = btn.dataset.closeModal!;
+        document.getElementById(modalId)?.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-switch-to]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.switchTo!;
+        document.querySelectorAll('#register-modal, #login-modal').forEach((m) => m.classList.remove('active'));
+        document.getElementById(targetId)?.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('#register-modal, #login-modal').forEach((modal) => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('#register-modal, #login-modal').forEach((m) => m.classList.remove('active'));
+        document.body.style.overflow = '';
+      }
+    });
+
+    document.querySelectorAll('.toggle-password').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const input = btn.closest('.flex')?.querySelector('input') as HTMLInputElement | null;
+        if (!input) return;
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        btn.querySelector('.eye-off')?.classList.toggle('hidden');
+        btn.querySelector('.eye')?.classList.toggle('hidden');
+      });
+    });
+  }
+
+  setupModals();
+  document.addEventListener('astro:after-swap', setupModals);
+</script>
+
+<script>
+  import { getUser, onAuthStateChange } from '../lib/auth';
+
+  function setupAuthElements() {
+    const guestOnly = document.querySelectorAll<HTMLElement>('[data-auth-guest-only]');
+    const userOnly = document.querySelectorAll<HTMLElement>('[data-auth-user-only]');
+
+    function toggle(user: any) {
+      guestOnly.forEach((el) => {
+        el.style.display = user ? 'none' : '';
+      });
+      userOnly.forEach((el) => {
+        el.style.display = user ? 'flex' : 'none';
+      });
+    }
+
+    getUser().then(toggle);
+    onAuthStateChange(toggle);
+  }
+
+  setupAuthElements();
+  document.addEventListener('astro:after-swap', setupAuthElements);
+</script>

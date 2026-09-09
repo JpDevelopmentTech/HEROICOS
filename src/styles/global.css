@@ -45,3 +45,20 @@ body {
 .leaflet-container {
   isolation: isolate;
 }
+
+/* Ambient white-light field behind every page. Sits above the body background
+   but below all content; translucent sections + backdrop-blur turn it into the
+   glassmorphism base. pointer-events:none so it never blocks clicks. */
+.bg-lights {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--color-dark-950);
+  background-image:
+    radial-gradient(38% 32% at 12% 6%, rgba(255, 255, 255, 0.11), transparent 70%),
+    radial-gradient(34% 30% at 88% 16%, rgba(255, 255, 255, 0.08), transparent 70%),
+    radial-gradient(42% 36% at 78% 70%, rgba(255, 255, 255, 0.09), transparent 72%),
+    radial-gradient(36% 32% at 18% 86%, rgba(255, 255, 255, 0.07), transparent 72%),
+    radial-gradient(30% 26% at 50% 44%, rgba(255, 255, 255, 0.045), transparent 75%);
+}

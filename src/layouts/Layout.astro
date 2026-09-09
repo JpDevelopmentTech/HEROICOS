@@ -95,6 +95,10 @@ const imageURL = new URL(image, Astro.site || 'https://heroicosrunclub.com').hre
     </script>
   </head>
   <body>
+    <!-- Ambient white "lights" behind the whole page. Index sections are
+         translucent + backdrop-blurred, so this glow bleeds through as glass. -->
+    <div class="bg-lights" aria-hidden="true"></div>
+
     <slot />
 
     <script>
