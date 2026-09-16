@@ -46,6 +46,125 @@ body {
   isolation: isolate;
 }
 
+/* Tarjeta HEROICOS x AmaLife: el eje del giro se desliza suavemente
+   entre las dos diagonales de la tarjeta en vez de saltar de una a otra
+   — la componente Y del eje sigue un coseno mientras el ángulo avanza
+   sin parar, con 32 muestras intermedias (el doble que antes) para que
+   la mezcla se lea todavía más fluida. La amplitud del coseno (403) es
+   el rango de giro anterior (537) restringido un 25%. Así el pivote
+   recorre continuamente las cuatro esquinas y la trayectoria combinada
+   se lee como un ∞. 849x537 es la proporción real de HEROICOSCARD.PNG.
+   La tarjeta además descansa a 45° via rotate-45 en el contenedor
+   exterior (ver MembershipCardSection). */
+@keyframes card-spin {
+  0% {
+    transform: rotate3d(849, 403, 0, 0deg);
+  }
+  3.125% {
+    transform: rotate3d(849, 395, 0, 22.5deg);
+  }
+  6.25% {
+    transform: rotate3d(849, 372, 0, 45deg);
+  }
+  9.375% {
+    transform: rotate3d(849, 335, 0, 67.5deg);
+  }
+  12.5% {
+    transform: rotate3d(849, 285, 0, 90deg);
+  }
+  15.625% {
+    transform: rotate3d(849, 224, 0, 112.5deg);
+  }
+  18.75% {
+    transform: rotate3d(849, 154, 0, 135deg);
+  }
+  21.875% {
+    transform: rotate3d(849, 79, 0, 157.5deg);
+  }
+  25% {
+    transform: rotate3d(849, 0, 0, 180deg);
+  }
+  28.125% {
+    transform: rotate3d(849, -79, 0, 202.5deg);
+  }
+  31.25% {
+    transform: rotate3d(849, -154, 0, 225deg);
+  }
+  34.375% {
+    transform: rotate3d(849, -224, 0, 247.5deg);
+  }
+  37.5% {
+    transform: rotate3d(849, -285, 0, 270deg);
+  }
+  40.625% {
+    transform: rotate3d(849, -335, 0, 292.5deg);
+  }
+  43.75% {
+    transform: rotate3d(849, -372, 0, 315deg);
+  }
+  46.875% {
+    transform: rotate3d(849, -395, 0, 337.5deg);
+  }
+  50% {
+    transform: rotate3d(849, -403, 0, 360deg);
+  }
+  53.125% {
+    transform: rotate3d(849, -395, 0, 382.5deg);
+  }
+  56.25% {
+    transform: rotate3d(849, -372, 0, 405deg);
+  }
+  59.375% {
+    transform: rotate3d(849, -335, 0, 427.5deg);
+  }
+  62.5% {
+    transform: rotate3d(849, -285, 0, 450deg);
+  }
+  65.625% {
+    transform: rotate3d(849, -224, 0, 472.5deg);
+  }
+  68.75% {
+    transform: rotate3d(849, -154, 0, 495deg);
+  }
+  71.875% {
+    transform: rotate3d(849, -79, 0, 517.5deg);
+  }
+  75% {
+    transform: rotate3d(849, 0, 0, 540deg);
+  }
+  78.125% {
+    transform: rotate3d(849, 79, 0, 562.5deg);
+  }
+  81.25% {
+    transform: rotate3d(849, 154, 0, 585deg);
+  }
+  84.375% {
+    transform: rotate3d(849, 224, 0, 607.5deg);
+  }
+  87.5% {
+    transform: rotate3d(849, 285, 0, 630deg);
+  }
+  90.625% {
+    transform: rotate3d(849, 335, 0, 652.5deg);
+  }
+  93.75% {
+    transform: rotate3d(849, 372, 0, 675deg);
+  }
+  96.875% {
+    transform: rotate3d(849, 395, 0, 697.5deg);
+  }
+  100% {
+    transform: rotate3d(849, 403, 0, 720deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card-spin {
+    transform-origin: 50% 50%;
+    animation: card-spin 10s linear infinite;
+  }
+}
+
 /* Ambient white-light field behind every page. Sits above the body background
    but below all content; translucent sections + backdrop-blur turn it into the
    glassmorphism base. pointer-events:none so it never blocks clicks. */

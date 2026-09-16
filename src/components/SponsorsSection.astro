@@ -2,36 +2,118 @@
 import SectionLabel from './ui/SectionLabel.astro';
 
 const sponsors = [
-  { name: 'NIKE', fontSize: '28px', letterSpacing: '6px' },
-  { name: 'GATORADE', fontSize: '22px', letterSpacing: '4px' },
-  { name: 'GARMIN', fontSize: '26px', letterSpacing: '5px' },
-  { name: 'FISIO+', fontSize: '26px', letterSpacing: '5px' },
+  { image: '/sponsors/KOSMA PRODUCCIONES BLANCO SIN FONDO.png', alt: 'Kosma Producciones' },
+  { image: '/sponsors/ALCALDIACTG.png', alt: 'Alcaldía de Cartagena' },
+  { image: '/sponsors/ELECTROLIT.png', alt: 'Electrolit' },
+  { image: '/sponsors/KINESTRONG.png', alt: 'Kinestrong' },
+  { image: '/sponsors/IDER.png', alt: 'IDER' },
 ];
+
 ---
 
-<section id="beneficios" class="flex flex-col items-center gap-8 bg-dark-950/55 px-5 py-14 backdrop-blur-2xl md:gap-12 md:px-[120px] md:py-20">
+<section id="beneficios" class="flex flex-col items-center gap-8 overflow-hidden bg-dark-950/55 px-5 py-14 backdrop-blur-2xl md:gap-12 md:px-[300px] md:py-20">
   <SectionLabel text="PARTNERS" />
 
-  <h2 class="max-w-[700px] text-center font-heading text-3xl font-extrabold italic leading-[1.1] tracking-[-1px] text-white md:text-4xl">
-    BENEFICIOS EXCLUSIVOS<br />CON NUESTROS ALIADOS.
-  </h2>
-
-  <p class="text-center font-body text-sm text-gray-400 md:text-base">
-    Descuentos y acceso preferencial por ser parte del club.
-  </p>
-
-  <div class="grid w-full grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-8">
+  <div class="sponsors-grid">
     {
-      sponsors.map((sponsor) => (
-        <div class="flex h-[90px] items-center justify-center rounded-xl border border-dark-700 bg-dark-800 md:h-[120px]">
-          <span
-            class="font-heading font-extrabold text-white/25"
-            style={`font-size: ${sponsor.fontSize}; letter-spacing: ${sponsor.letterSpacing}`}
-          >
-            {sponsor.name}
-          </span>
+      sponsors.map((sponsor, i) => (
+        <div class:list={['sponsor-card', i % 2 === 0 ? 'sponsor-card--dark' : 'sponsor-card--light']}>
+          <span class="sponsor-glow" aria-hidden="true" />
+          <img src={sponsor.image} alt={sponsor.alt} class="sponsor-logo" loading="eager" decoding="async" />
         </div>
       ))
     }
   </div>
 </section>
+
+<style>
+
+  .sponsors-grid {
+    display: grid;
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.4rem;
+  }
+
+  @media (min-width: 640px) {
+    .sponsors-grid {
+      gap: 0.75rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .sponsors-grid {
+      gap: 1.5rem;
+    }
+  }
+
+  .sponsor-card {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 64px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    padding: 0.4rem;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  @media (min-width: 640px) {
+    .sponsor-card {
+      height: 100px;
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .sponsor-card {
+      height: 180px;
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+  }
+
+  .sponsor-card--dark {
+    background: rgba(10, 10, 10, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .sponsor-card--dark .sponsor-glow {
+    background:
+      radial-gradient(circle at 18% 15%, rgba(255, 255, 255, 0.4), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.22), transparent 50%);
+  }
+
+  .sponsor-card--light {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .sponsor-card--light .sponsor-glow {
+    background:
+      radial-gradient(circle at 18% 15%, rgba(0, 0, 0, 0.28), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(0, 0, 0, 0.16), transparent 50%);
+  }
+
+  .sponsor-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    filter: blur(6px);
+  }
+
+  .sponsor-logo {
+    position: relative;
+    z-index: 1;
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+</style>
